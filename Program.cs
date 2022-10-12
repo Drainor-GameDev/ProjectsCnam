@@ -8,12 +8,12 @@ namespace JeuDeCombat
 {
     public class charactersActionValue
     {
-        string classe, name;
-        int damage;
-        int defence;
-        int armor;
-        int hp, maxHp;
-        bool sendBack = false, ceFameuxBill = false;
+        public string classe, name;
+        public int damage;
+        public int defence;
+        public int armor;
+        public int hp, maxHp;
+        public bool sendBack = false, ceFameuxBill = false, silvered = false;
         List<Buff> buffs = new List<Buff>();
 
         public charactersActionValue(Tuple<string, int, int, int> _classe, string _name)
@@ -323,6 +323,81 @@ namespace JeuDeCombat
                                 break;
                         }
                         break;
+                    case "Silver":
+                        switch (selectedSpecial)
+                        {
+                            case 1:
+                                if (!silvered)
+                                {
+                                    DoDmgToOther(damage + 20, other, true);
+                                    bufftemp = new Buff(3, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                }
+                                else
+                                {
+                                    bufftemp = new Buff(3, this, other);
+                                    bufftemp.armorReduce = 20;
+                                    other.buffs.Add(bufftemp);
+                                    DoDmgToOther(110, other, true);
+                                    bufftemp = new Buff(11, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                    selectedSpecial = 4;
+                                }
+                                break;
+                            case 2:
+                                if (!silvered)
+                                {
+                                    bufftemp = new Buff(2, this, other);
+                                    bufftemp.block = true;
+                                    buffs.Add(bufftemp);
+                                    bufftemp = new Buff(2, this, other);
+                                    bufftemp.armorReduce = -20;
+                                    buffs.Add(bufftemp);
+                                    bufftemp = new Buff(10, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                }
+                                else
+                                {
+                                    bufftemp = new Buff(3, this, other);
+                                    bufftemp.stun = true;
+                                    buffs.Add(bufftemp);
+                                    bufftemp = new Buff(6, this, other);
+                                    bufftemp.dmgToOther = 30;
+                                    buffs.Add(bufftemp);
+                                    bufftemp = new Buff(12, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                    selectedSpecial = 5;
+                                }
+                                break;
+                            case 3:
+                                if (!silvered)
+                                {
+                                    bufftemp = new Buff(3, this, other);
+                                    bufftemp.defence = 15;
+                                    buffs.Add(bufftemp);
+                                    bufftemp = new Buff(3, this, other);
+                                    bufftemp.bonusDmg = 30;
+                                    buffs.Add(bufftemp);
+                                    bufftemp = new Buff(14, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                }
+                                else
+                                {
+                                    DoDmgToOther(damage / 3, other, true);
+                                    AddHp(damage / 2);
+                                    bufftemp = new Buff(10, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                    selectedSpecial = 6;
+                                }
+                                break;
+                        }
+                        break;
                 }
                 Console.WriteLine(name + " utilise: " + Program.Spells[classe][selectedSpecial - 1]);
                 return true;
@@ -430,8 +505,8 @@ namespace JeuDeCombat
             "Zelote",
             "Xyns",
             "Daicy",
-            "Bill"
-
+            "Bill",
+            "Silver"
         };
         public static Dictionary<string, List<string>> Spells = new Dictionary<string, List<string>>
         {
@@ -440,7 +515,8 @@ namespace JeuDeCombat
             {"Zelote", new List<string>{ "Jet du Bouclier", "Blocage" ,"Destruction des défenses"} },
             {"Xyns", new List<string>{ "Espadon de Givre", "Aiguille aqueuse", "Bulle d’eau" } },
             {"Daicy", new List<string>{ "Invisibilité", "Frelon de Flamme", "Lance Incandescente" } },
-            {"Bill", new List<string>{ "Lentille Mécanique", "Endormissement", "Sérénité", "Lentille Mécanique", "Fureur du Commandant", "Donnant Donnant" } }
+            {"Bill", new List<string>{ "Lentille Mécanique", "Endormissement", "Sérénité", "Lentille Mécanique", "Fureur du Commandant", "Donnant Donnant" } },
+            {"Silver", new List<string>{ "Neutralisation", "L'Eclaire d'argent", "Ange du Tonnerre", "L'Abattement de la Foudre", "Cage de Foudre", "Fierté du Conquérant" } }
         };
         static void Main()
         {
@@ -828,6 +904,7 @@ namespace JeuDeCombat
                 Console.WriteLine("4 - Xyns");
                 Console.WriteLine("5 - Daicy");
                 Console.WriteLine("6 - Bill");
+                Console.WriteLine("7 - Silver");
                 playerRead = Int32.Parse(Console.ReadLine());
                 if (playerRead > 0 && playerRead <= Classe.Count)
                 {
