@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -8,7 +8,7 @@ namespace JeuDeCombat
 {
     public class charactersActionValue
     {
-        string classe;
+        string classe, name;
         int damage;
         int defence;
         int armor;
@@ -16,13 +16,14 @@ namespace JeuDeCombat
         bool sendBack = false;
         List<Buff> buffs = new List<Buff>();
 
-        public charactersActionValue(Tuple<string, int, int, int> _classe)
+        public charactersActionValue(Tuple<string, int, int, int> _classe, string _name)
         {
             classe = _classe.Item1;
             damage = _classe.Item3;
             maxHp = _classe.Item2;
             armor = _classe.Item4;
             hp = maxHp;
+            name = _name;
         }
 
         public void Kill()
@@ -256,7 +257,7 @@ namespace JeuDeCombat
                         }
                         break;
                 }
-                Console.WriteLine(Program.Spells[classe][selectedSpecial - 1]);
+                Console.WriteLine(name + " utilise: " + Program.Spells[classe][selectedSpecial - 1]);
                 return true;
             }
             else
@@ -372,8 +373,8 @@ namespace JeuDeCombat
             int victoryCount1 = 0, virctoryCount2 = 0;
             for (int i = 0; i < 1000; i++)
             {
-                charactersActionValue AI1Character = new charactersActionValue(Classes(1));
-                charactersActionValue AI2Character = new charactersActionValue(Classes(3));
+                charactersActionValue AI1Character = new charactersActionValue(Classes(1), "IA1");
+                charactersActionValue AI2Character = new charactersActionValue(Classes(3), "IA2");
                 int nombreTour = 0;
                 while (true)
                 {
@@ -457,11 +458,11 @@ namespace JeuDeCombat
 
                 playerChar = DisplayClass();
 
-                charactersActionValue playerCharacter = new charactersActionValue(Classes(playerChar));
+                charactersActionValue playerCharacter = new charactersActionValue(Classes(playerChar),"Joueur");
 
                 int verdict = IA(Classe.Count() + 1);
 
-                charactersActionValue IACharacter = new charactersActionValue(Classes(verdict));
+                charactersActionValue IACharacter = new charactersActionValue(Classes(verdict), "IA");
 
 
                 while (finDeParti == false)
@@ -697,11 +698,11 @@ namespace JeuDeCombat
             classeID--;
             List<int> pvList = new List<int>
             {
-                240,
-                140,
-                300,
-                260,
-                0
+                1200,
+                950,
+                1850,
+                1280,
+                1050
             };
             List<int> attaqueList = new List<int>
             {
@@ -709,15 +710,15 @@ namespace JeuDeCombat
                 40,
                 35,
                 70,
-                0
+                85
             };
             List<int> armorList = new List<int>
             {
                 20,
-                20,
+                17,
                 55,
                 25,
-                0
+                23
             };
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
