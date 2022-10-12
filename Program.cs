@@ -469,6 +469,31 @@ namespace JeuDeCombat
                                 break;
                         }
                         break;
+                    case "Akuri":
+                        switch (selectedSpecial)
+                        {
+                            case 1:
+                                AddHp((int)GetArmor() * 2);
+                                bufftemp = new Buff(7, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 2:
+                                DoDmgToOther(50, other, true);
+                                bufftemp = new Buff(2, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 3:
+                                bufftemp = new Buff(3, this, other);
+                                bufftemp.armorReduce = -20;
+                                buffs.Add(bufftemp);
+                                bufftemp = new Buff(6, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                        }
+                        break;
                 }
                 texte = name + " utilise: " + Program.Spells[classe][selectedSpecial - 1];
                 return true;
@@ -582,7 +607,7 @@ namespace JeuDeCombat
             "Silver",
             "Eilli",
             "Beltrame",
-            "Eilli",
+            "Akuri",
             "Eilli",
             "Eilli",
         };
@@ -597,6 +622,7 @@ namespace JeuDeCombat
             {"Silver", new List<string>{ "Neutralisation", "L'Eclaire d'argent", "Ange du Tonnerre", "L'Abattement de la Foudre", "Cage de Foudre", "Fierté du Conquérant" } },
             {"Eilli", new List<string>{ "Nocturne de l'apaisement", "Protection Luminescente", "Requiem des plantes" } },
             {"Beltrame", new List<string>{ "Aile de Glace", "Chaîne des Ombre", "Orgue Primordial" } },
+            {"Akuri", new List<string>{ "Etoile Central", "Pluie d'astéroïdes", "Barrière de Sel" } },
         };
         static void Main()
         {
@@ -943,7 +969,8 @@ namespace JeuDeCombat
                 1300,
                 850,
                 1100,
-                1160
+                1160,
+                1200
             };
             List<int> attaqueList = new List<int>
             {
@@ -955,7 +982,8 @@ namespace JeuDeCombat
                 50,
                 45,
                 40,
-                55
+                55,
+                37
             };
             List<int> armorList = new List<int>
             {
@@ -967,7 +995,8 @@ namespace JeuDeCombat
                 13,
                 30,
                 45,
-                37
+                37,
+                34
             };
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
@@ -1001,7 +1030,7 @@ namespace JeuDeCombat
                 Console.WriteLine("7 - Silver");
                 Console.WriteLine("8 - Eilli");
                 Console.WriteLine("9 - Beltrame");
-                Console.WriteLine("10- Daicy");
+                Console.WriteLine("10- Akuri");
                 Console.WriteLine("11- Bill");
                 Console.WriteLine("12- Silver");
                 playerRead = Int32.Parse(Console.ReadLine());
