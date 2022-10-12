@@ -434,6 +434,41 @@ namespace JeuDeCombat
                                 break;
                         }
                         break;
+                    case "Beltrame":
+                        switch (selectedSpecial)
+                        {
+                            case 1:
+                                bufftemp = new Buff(2, this, other);
+                                bufftemp.armorReduce = -20;
+                                buffs.Add(bufftemp);
+                                bufftemp = new Buff(7, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 2:
+                                bufftemp = new Buff(2, this, other);
+                                bufftemp.stun = true;
+                                other.buffs.Add(bufftemp);
+                                bufftemp = new Buff(3, this, other);
+                                bufftemp.bonusDmg = 20;
+                                buffs.Add(bufftemp);
+                                bufftemp = new Buff(14, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 3:
+                                bufftemp = new Buff(3, this, other);
+                                bufftemp.stun = true;
+                                other.buffs.Add(bufftemp);
+                                bufftemp = new Buff(3, this, other);
+                                bufftemp.dmgToOther = 40;
+                                buffs.Add(bufftemp);
+                                bufftemp = new Buff(16, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                        }
+                        break;
                 }
                 texte = name + " utilise: " + Program.Spells[classe][selectedSpecial - 1];
                 return true;
@@ -546,7 +581,7 @@ namespace JeuDeCombat
             "Bill",
             "Silver",
             "Eilli",
-            "Eilli",
+            "Beltrame",
             "Eilli",
             "Eilli",
             "Eilli",
@@ -561,6 +596,7 @@ namespace JeuDeCombat
             {"Bill", new List<string>{ "Lentille Mécanique", "Endormissement", "Sérénité", "Lentille Mécanique", "Fureur du Commandant", "Donnant Donnant" } },
             {"Silver", new List<string>{ "Neutralisation", "L'Eclaire d'argent", "Ange du Tonnerre", "L'Abattement de la Foudre", "Cage de Foudre", "Fierté du Conquérant" } },
             {"Eilli", new List<string>{ "Nocturne de l'apaisement", "Protection Luminescente", "Requiem des plantes" } },
+            {"Beltrame", new List<string>{ "Aile de Glace", "Chaîne des Ombre", "Orgue Primordial" } },
         };
         static void Main()
         {
@@ -906,7 +942,8 @@ namespace JeuDeCombat
                 1050,
                 1300,
                 850,
-                1100
+                1100,
+                1160
             };
             List<int> attaqueList = new List<int>
             {
@@ -917,7 +954,8 @@ namespace JeuDeCombat
                 85,
                 50,
                 45,
-                40
+                40,
+                55
             };
             List<int> armorList = new List<int>
             {
@@ -928,7 +966,8 @@ namespace JeuDeCombat
                 23,
                 13,
                 30,
-                45
+                45,
+                37
             };
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
@@ -961,7 +1000,7 @@ namespace JeuDeCombat
                 Console.WriteLine("6 - Bill");
                 Console.WriteLine("7 - Silver");
                 Console.WriteLine("8 - Eilli");
-                Console.WriteLine("9 - Xyns");
+                Console.WriteLine("9 - Beltrame");
                 Console.WriteLine("10- Daicy");
                 Console.WriteLine("11- Bill");
                 Console.WriteLine("12- Silver");
