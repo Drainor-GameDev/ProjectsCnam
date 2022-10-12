@@ -353,14 +353,13 @@ namespace JeuDeCombat
             "Daicy"
 
         };
-        static List<List<string>> Spells = new List<List<string>>
+        public static Dictionary<string, List<string>> Spells = new Dictionary<string, List<string>>
         {
-            new List<string>{ "Parade des vents", "Lame Ardente", "Ruse" },
-            new List<string>{ "Soin Immédiat", "Pacification", "Jardin Hostile" },
-            new List<string>{ "Jet du Bouclier", "Blocage" ,"Destruction des défenses"},
-            new List<string>{ "Espadon de Givre", "Aiguille aqueuse", "Bulle d’eau" },
-            new List<string>{ "Invisibilité", "Frelon de Flamme", "Lance Incandescente" },
-
+            {"Bestraf", new List<string>{ "Parade des vents", "Lame Ardente", "Ruse" } },
+            {"Kolyma", new List<string>{ "Soin Immédiat", "Pacification", "Jardin Hostile" } },
+            {"Zelote", new List<string>{ "Jet du Bouclier", "Blocage" ,"Destruction des défenses"} },
+            {"Xyns", new List<string>{ "Espadon de Givre", "Aiguille aqueuse", "Bulle d’eau" } },
+            {"Daicy", new List<string>{ "Invisibilité", "Frelon de Flamme", "Lance Incandescente" } }
         };
         static void Main()
         {
