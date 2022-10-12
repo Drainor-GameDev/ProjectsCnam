@@ -113,7 +113,7 @@ namespace JeuDeCombat
                 Buff bufftemp;
                 switch (classe)
                 {
-                    case "Damager":
+                    case "Bestraf":
                         switch (selectedSpecial)
                         {
                             case 1:
@@ -138,7 +138,7 @@ namespace JeuDeCombat
                                 break;
                         }
                         break;
-                    case "Healer":
+                    case "Kolyma":
                         switch (selectedSpecial)
                         {
                             case 1:
@@ -165,7 +165,7 @@ namespace JeuDeCombat
                                 break;
                         }
                         break;
-                    case "Tank":
+                    case "Zelote":
                         switch (selectedSpecial)
                         {
                             case 1:
@@ -173,7 +173,7 @@ namespace JeuDeCombat
                                 bufftemp.bonusDmg = 15;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(12, this, other);
-                                bufftemp.cooldown[selectedSpecial-1] = true;
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
                                 buffs.Add(bufftemp);
                                 DoDmgToOther(damage, other);
                                 GetDmg(150);
@@ -183,7 +183,7 @@ namespace JeuDeCombat
                                 bufftemp.block = true;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(7, this, other);
-                                bufftemp.cooldown[selectedSpecial-1] = true;
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
                                 buffs.Add(bufftemp);
                                 break;
                             case 3:
@@ -191,7 +191,36 @@ namespace JeuDeCombat
                                 bufftemp.armorReduce = 50;
                                 other.buffs.Add(bufftemp);
                                 bufftemp = new Buff(10, this, other);
-                                bufftemp.cooldown[selectedSpecial-1] = true;
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                        }
+                        break;
+                    case "Xyns":
+                        switch (selectedSpecial)
+                        {
+                            case 1:
+                                bufftemp = new Buff(2, this, other);
+                                bufftemp.bonusDmg = damage;
+                                buffs.Add(bufftemp);
+                                bufftemp = new Buff(7, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 2:
+                                bufftemp = new Buff(4, this, other);
+                                bufftemp.defence = 30;
+                                buffs.Add(bufftemp);
+                                bufftemp = new Buff(9, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 3:
+                                bufftemp = new Buff(2, this, other);
+                                bufftemp.stun = true;
+                                other.buffs.Add(bufftemp);
+                                bufftemp = new Buff(15, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -251,12 +280,22 @@ namespace JeuDeCombat
             }
             return deftemp;
         }
+
+        public bool IsStunned()
+        {
+            foreach (Buff buff in buffs)
+            {
+                if (buff.stun)
+                    return true;
+            }
+            return false;
+        }
     }
 
     class Buff
     {
         public int turn = 0, bonusDmg = 0, dmgToOther = 0, armorReduce = 0, defence = 0;
-        public bool ignoreDef = false, block = false, activate = true;
+        public bool ignoreDef = false, block = false, activate = true, stun = false;
         public List<bool> cooldown = new List<bool>{false, false, false};
         public charactersActionValue ally, enemy;
         public Buff(int _turn, charactersActionValue _ally, charactersActionValue _enemy)
@@ -277,9 +316,10 @@ namespace JeuDeCombat
     {
         static List<string> Classe = new List<string>
         {
-            "Damager",
-            "Healer",
-            "Tank",
+            "Bestraf",
+            "Kolyma",
+            "Zelote",
+            "Xyns"
 
         };
         static void Main()
@@ -631,9 +671,10 @@ namespace JeuDeCombat
             while (!playerReturn)
             {
                 Console.WriteLine("Veuillez choisir votre classe de personnage :");
-                Console.WriteLine("1 - Damager");
-                Console.WriteLine("2 - Healer");
-                Console.WriteLine("3 - Tank");
+                Console.WriteLine("1 - Bestraf");
+                Console.WriteLine("2 - Kolyma");
+                Console.WriteLine("3 - Zelote");
+                Console.WriteLine("4 - Xyns");
                 playerRead = Int32.Parse(Console.ReadLine());
                 if (playerRead > 0 && playerRead <= Classe.Count)
                 {
