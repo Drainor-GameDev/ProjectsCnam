@@ -30,6 +30,12 @@ namespace JeuDeCombat
                 bufftemp.cooldown[2] = true;
                 buffs.Add(bufftemp);
             }
+            if (classe == "Jamii")
+            {
+                Buff bufftemp = new Buff(13, this);
+                bufftemp.cooldown[0] = true;
+                buffs.Add(bufftemp);
+            }
         }
 
         public void Kill()
@@ -521,6 +527,33 @@ namespace JeuDeCombat
                                 break;
                         }
                         break;
+                    case "Jamii":
+                        switch (selectedSpecial)
+                        {
+                            case 1:
+                                other.hp = 1;
+                                bufftemp = new Buff(2, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 2:
+                                sendBack = true;
+                                DoDmgToOther(200, other);
+                                bufftemp = new Buff(13, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 3:
+                                healBack = true;
+                                bufftemp = new Buff(2, this, other);
+                                bufftemp.armorReduce = 20;
+                                other.buffs.Add(bufftemp);
+                                bufftemp = new Buff(6, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                        }
+                        break;
                 }
                 texte = name + " utilise: " + Program.Spells[classe][selectedSpecial - 1];
                 return true;
@@ -636,7 +669,7 @@ namespace JeuDeCombat
             "Beltrame",
             "Akuri",
             "Leeroy Jenkins",
-            "Eilli",
+            "Jamii",
         };
         public static Dictionary<string, List<string>> Spells = new Dictionary<string, List<string>>
         {
@@ -651,6 +684,7 @@ namespace JeuDeCombat
             {"Beltrame", new List<string>{ "Aile de Glace", "Chaîne des Ombre", "Orgue Primordial" } },
             {"Akuri", new List<string>{ "Etoile Central", "Pluie d'astéroïdes", "Barrière de Sel" } },
             {"Leeroy Jenkins", new List<string>{ "LEEROY JENKINS!!!", "LEEROY JENKINS!!!!!!", "LEEROY JENKINS!!!!!!!!" } },
+            {"Jamii", new List<string>{ "ÉNORME !!!", "Chauffe Marcel !!!", "DIT MOI JAMI!!!" } }
         };
         static void Main()
         {
@@ -999,7 +1033,8 @@ namespace JeuDeCombat
                 1100,
                 1160,
                 1200,
-                1111
+                1111,
+                666
             };
             List<int> attaqueList = new List<int>
             {
@@ -1013,7 +1048,8 @@ namespace JeuDeCombat
                 40,
                 55,
                 37,
-                195
+                195,
+                5
             };
             List<int> armorList = new List<int>
             {
@@ -1027,7 +1063,8 @@ namespace JeuDeCombat
                 45,
                 37,
                 34,
-                15
+                15,
+                75
             };
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
@@ -1063,7 +1100,7 @@ namespace JeuDeCombat
                 Console.WriteLine("9 - Beltrame");
                 Console.WriteLine("10- Akuri");
                 Console.WriteLine("11- Leeroy Jenkins");
-                Console.WriteLine("12- Silver");
+                Console.WriteLine("12- Jamii");
                 playerRead = Int32.Parse(Console.ReadLine());
                 if (playerRead > 0 && playerRead <= Classe.Count)
                 {
