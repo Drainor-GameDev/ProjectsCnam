@@ -988,29 +988,39 @@ namespace JeuDeCombat
             }
             return cont;
         }
-
-        static void DisplayChoixSpe(charactersActionValue Value, charactersActionValue Ennemi)
+        
+        static string DisplayChoixSpe(charactersActionValue Value, charactersActionValue Ennemi)
         {
+            string act = "";
             int playerRead = 0;
             bool playerReturn = false;
             while (!playerReturn || Value.CheckCD(playerRead) > 0)
             {
+
                 Console.WriteLine("Choix Attaque Spécial :");
                 Console.WriteLine($"1 - {Spells[Value.GetClass()][0]} (CD : {Value.CheckCD(1)})");
-                Console.WriteLine($"2 - {Spells[Value.GetClass()][1]} (CD : {Value.CheckCD(2)})");
-                Console.WriteLine($"3 - {Spells[Value.GetClass()][2]} (CD : {Value.CheckCD(3)})");
+                if(Value.ceFameuxBill == true)
+                {
+                    Console.WriteLine($"2 - {Spells[Value.GetClass()][4]} (CD : {Value.CheckCD(2)})");
+                    Console.WriteLine($"3 - {Spells[Value.GetClass()][5]} (CD : {Value.CheckCD(3)})");
+                }
+                else
+                {
+                    Console.WriteLine($"2 - {Spells[Value.GetClass()][1]} (CD : {Value.CheckCD(2)})");
+                    Console.WriteLine($"3 - {Spells[Value.GetClass()][2]} (CD : {Value.CheckCD(3)})");
+                }
                 Console.WriteLine("Choix :");
                 playerRead = Int32.Parse(Console.ReadLine());
                 if (playerRead > 0 && playerRead <= 3)
                 {
-                    if (Value.DoSpecial(Ennemi, playerRead) == true)
+                    if (Value.DoSpecial(Ennemi, playerRead, out act) == true)
                     {
                         playerReturn = true;
-                        break;
+                        return act;
                     }
                 }
             }
-            return;
+            return act;
         }
     }
 }
