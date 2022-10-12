@@ -494,6 +494,33 @@ namespace JeuDeCombat
                                 break;
                         }
                         break;
+                    case "Leeroy Jenkins":
+                        switch (selectedSpecial)
+                        {
+                            case 1:
+                                DoDmgToOther(damage * 3, other);
+                                bufftemp = new Buff(7, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 2:
+                                bufftemp = new Buff(5, this, other);
+                                bufftemp.stun = true;
+                                other.buffs.Add(bufftemp);
+                                bufftemp = new Buff(30, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 3:
+                                armor = 0;
+                                GetDmg(40);
+                                damage += 70;
+                                bufftemp = new Buff(1, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                        }
+                        break;
                 }
                 texte = name + " utilise: " + Program.Spells[classe][selectedSpecial - 1];
                 return true;
@@ -608,7 +635,7 @@ namespace JeuDeCombat
             "Eilli",
             "Beltrame",
             "Akuri",
-            "Eilli",
+            "Leeroy Jenkins",
             "Eilli",
         };
         public static Dictionary<string, List<string>> Spells = new Dictionary<string, List<string>>
@@ -623,6 +650,7 @@ namespace JeuDeCombat
             {"Eilli", new List<string>{ "Nocturne de l'apaisement", "Protection Luminescente", "Requiem des plantes" } },
             {"Beltrame", new List<string>{ "Aile de Glace", "Chaîne des Ombre", "Orgue Primordial" } },
             {"Akuri", new List<string>{ "Etoile Central", "Pluie d'astéroïdes", "Barrière de Sel" } },
+            {"Leeroy Jenkins", new List<string>{ "LEEROY JENKINS!!!", "LEEROY JENKINS!!!!!!", "LEEROY JENKINS!!!!!!!!" } },
         };
         static void Main()
         {
@@ -970,7 +998,8 @@ namespace JeuDeCombat
                 850,
                 1100,
                 1160,
-                1200
+                1200,
+                1111
             };
             List<int> attaqueList = new List<int>
             {
@@ -983,7 +1012,8 @@ namespace JeuDeCombat
                 45,
                 40,
                 55,
-                37
+                37,
+                195
             };
             List<int> armorList = new List<int>
             {
@@ -996,7 +1026,8 @@ namespace JeuDeCombat
                 30,
                 45,
                 37,
-                34
+                34,
+                15
             };
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
@@ -1031,7 +1062,7 @@ namespace JeuDeCombat
                 Console.WriteLine("8 - Eilli");
                 Console.WriteLine("9 - Beltrame");
                 Console.WriteLine("10- Akuri");
-                Console.WriteLine("11- Bill");
+                Console.WriteLine("11- Leeroy Jenkins");
                 Console.WriteLine("12- Silver");
                 playerRead = Int32.Parse(Console.ReadLine());
                 if (playerRead > 0 && playerRead <= Classe.Count)
