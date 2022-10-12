@@ -78,7 +78,7 @@ namespace JeuDeCombat
             int dmgtodo = dmg;
             foreach (Buff buff in buffs)
             {
-                if(buff.activate)
+                if (buff.activate)
                     dmgtodo += buff.bonusDmg;
             }
             other.GetDmg(dmgtodo, this, ignoreDef);
@@ -99,7 +99,7 @@ namespace JeuDeCombat
             int armortemp = armor;
             foreach (Buff buff in buffs)
             {
-                if(buff.activate)
+                if (buff.activate)
                     armortemp -= buff.armorReduce;
             }
             return armortemp;
@@ -119,7 +119,7 @@ namespace JeuDeCombat
                             case 1:
                                 sendBack = true;
                                 bufftemp = new Buff(4, this, other);
-                                bufftemp.cooldown[selectedSpecial-1] = true;
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
                                 buffs.Add(bufftemp);
                                 break;
                             case 2:
@@ -127,13 +127,13 @@ namespace JeuDeCombat
                                 bufftemp.bonusDmg = 50;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(7, this, other);
-                                bufftemp.cooldown[selectedSpecial-1] = true;
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
                                 buffs.Add(bufftemp);
                                 break;
                             case 3:
                                 DoDmgToOther(damage, other, true);
                                 bufftemp = new Buff(3, this, other);
-                                bufftemp.cooldown[selectedSpecial-1] = true;
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -144,7 +144,7 @@ namespace JeuDeCombat
                             case 1:
                                 AddHp(250);
                                 bufftemp = new Buff(5, this, other);
-                                bufftemp.cooldown[selectedSpecial-1] = true;
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
                                 buffs.Add(bufftemp);
                                 break;
                             case 2:
@@ -152,7 +152,7 @@ namespace JeuDeCombat
                                 bufftemp.bonusDmg = -30;
                                 other.buffs.Add(bufftemp);
                                 bufftemp = new Buff(12, this, other);
-                                bufftemp.cooldown[selectedSpecial-1] = true;
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
                                 buffs.Add(bufftemp);
                                 break;
                             case 3:
@@ -160,7 +160,7 @@ namespace JeuDeCombat
                                 bufftemp.dmgToOther = 20;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(6, this, other);
-                                bufftemp.cooldown[selectedSpecial-1] = true;
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -275,7 +275,7 @@ namespace JeuDeCombat
             int deftemp = defence;
             foreach (Buff buff in buffs)
             {
-                if(buff.activate)
+                if (buff.activate)
                     deftemp -= buff.defence;
             }
             return deftemp;
@@ -296,7 +296,7 @@ namespace JeuDeCombat
     {
         public int turn = 0, bonusDmg = 0, dmgToOther = 0, armorReduce = 0, defence = 0;
         public bool ignoreDef = false, block = false, activate = true, stun = false;
-        public List<bool> cooldown = new List<bool>{false, false, false};
+        public List<bool> cooldown = new List<bool> { false, false, false };
         public charactersActionValue ally, enemy;
         public Buff(int _turn, charactersActionValue _ally, charactersActionValue _enemy)
         {
@@ -330,7 +330,7 @@ namespace JeuDeCombat
         static void TestStats()
         {
             int victoryCount1 = 0, virctoryCount2 = 0;
-            for(int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 charactersActionValue AI1Character = new charactersActionValue(Classes(1));
                 charactersActionValue AI2Character = new charactersActionValue(Classes(3));
@@ -458,24 +458,35 @@ namespace JeuDeCombat
                     DisplayHealth(playerCharacter.GetClass(), playerCharacter, IACharacter);
 
                     int playermoov;
-                    playermoov = DisplayTurnChoice(playerCharacter);
+
+                    if (playerCharacter.IsStunned() == true) playermoov = 0;
+                    else playermoov = DisplayTurnChoice(playerCharacter);
 
                     Console.WriteLine();
-                    int iaspell = IA(4);
-                    bool playerReturn = false;
-
-                    while (!playerReturn)
+                    int iaspell;
+                    if (IACharacter.IsStunned() == true) 
+                    {
+                        iaspell = 0; 
+                    }
+                    else
                     {
                         iaspell = IA(4);
-                        if (iaspell == 3 && IACharacter.CheckCD(1) > 0 && IACharacter.CheckCD(2) > 0 && IACharacter.CheckCD(3) > 0)
+                        bool playerReturn = false;
+
+                        while (!playerReturn)
                         {
-                            playerReturn = false;
-                        }
-                        else
-                        {
-                            playerReturn = true;
+                            iaspell = IA(4);
+                            if (iaspell == 3 && IACharacter.CheckCD(1) > 0 && IACharacter.CheckCD(2) > 0 && IACharacter.CheckCD(3) > 0)
+                            {
+                                playerReturn = false;
+                            }
+                            else
+                            {
+                                playerReturn = true;
+                            }
                         }
                     }
+
 
                     Priorite(playerCharacter, IACharacter, playermoov, iaspell);
 
@@ -586,6 +597,20 @@ namespace JeuDeCombat
                     Console.WriteLine("L'IA a décidé de faire l'attaque spéciale n°" + ranAtSp);
                 }
             }
+            if (cj == 0 || cia == 0)
+            {
+
+                if (cj == 0)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("Le Joueur a été assomé pour ce tours");
+                }
+                if (cia == 0)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine("L'Ia a été assomé pour ce tours");
+                }
+            }
         }
 
 
@@ -634,19 +659,22 @@ namespace JeuDeCombat
             {
                 240,
                 140,
-                300
+                300,
+                260
             };
             List<int> attaqueList = new List<int>
             {
                 95,
                 40,
-                35
+                35,
+                70
             };
             List<int> armorList = new List<int>
             {
                 20,
                 20,
-                55
+                55,
+                25
             };
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
@@ -726,7 +754,7 @@ namespace JeuDeCombat
             }
             return playerRead;
         }
-                //Fct qui affiche le resultat des actions choisit
+        //Fct qui affiche le resultat des actions choisit
         static string DisplayRePlay()
         {
             string cont = "";
