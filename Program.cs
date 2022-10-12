@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace JeuDeCombat
         public int defence;
         public int armor;
         public int hp, maxHp;
-        public bool sendBack = false, ceFameuxBill = false, silvered = false;
+        public bool sendBack = false, healBack = false, ceFameuxBill = false, silvered = false;
         List<Buff> buffs = new List<Buff>();
 
         public charactersActionValue(Tuple<string, int, int, int> _classe, string _name)
@@ -53,6 +53,11 @@ namespace JeuDeCombat
             {
                 sendBack = false;
                 other.GetDmg(dmg);
+            }
+            else if (healBack)
+            {
+                healBack = false;
+                AddHp(dmg);
             }
             else
             {
@@ -369,7 +374,7 @@ namespace JeuDeCombat
                                 {
                                     bufftemp = new Buff(3, this, other);
                                     bufftemp.stun = true;
-                                    buffs.Add(bufftemp);
+                                    other.buffs.Add(bufftemp);
                                     bufftemp = new Buff(6, this, other);
                                     bufftemp.dmgToOther = 30;
                                     buffs.Add(bufftemp);
@@ -398,6 +403,34 @@ namespace JeuDeCombat
                                     buffs.Add(bufftemp);
                                     selectedSpecial = 6;
                                 }
+                                break;
+                        }
+                        break;
+                    case "Eilli":
+                        switch (selectedSpecial)
+                        {
+                            case 1:
+                                healBack = true;
+                                bufftemp = new Buff(7, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 2:
+                                bufftemp = new Buff(4, this, other);
+                                bufftemp.defence = 40;
+                                buffs.Add(bufftemp);
+                                bufftemp = new Buff(12, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 3:
+                                DoDmgToOther(40, other);
+                                bufftemp = new Buff(3, this, other);
+                                bufftemp.stun = true;
+                                other.buffs.Add(bufftemp);
+                                bufftemp = new Buff(15, this, other);
+                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                buffs.Add(bufftemp);
                                 break;
                         }
                         break;
@@ -511,7 +544,12 @@ namespace JeuDeCombat
             "Xyns",
             "Daicy",
             "Bill",
-            "Silver"
+            "Silver",
+            "Eilli",
+            "Eilli",
+            "Eilli",
+            "Eilli",
+            "Eilli",
         };
         public static Dictionary<string, List<string>> Spells = new Dictionary<string, List<string>>
         {
@@ -521,7 +559,8 @@ namespace JeuDeCombat
             {"Xyns", new List<string>{ "Espadon de Givre", "Aiguille aqueuse", "Bulle d’eau" } },
             {"Daicy", new List<string>{ "Invisibilité", "Frelon de Flamme", "Lance Incandescente" } },
             {"Bill", new List<string>{ "Lentille Mécanique", "Endormissement", "Sérénité", "Lentille Mécanique", "Fureur du Commandant", "Donnant Donnant" } },
-            {"Silver", new List<string>{ "Neutralisation", "L'Eclaire d'argent", "Ange du Tonnerre", "L'Abattement de la Foudre", "Cage de Foudre", "Fierté du Conquérant" } }
+            {"Silver", new List<string>{ "Neutralisation", "L'Eclaire d'argent", "Ange du Tonnerre", "L'Abattement de la Foudre", "Cage de Foudre", "Fierté du Conquérant" } },
+            {"Eilli", new List<string>{ "Nocturne de l'apaisement", "Protection Luminescente", "Requiem des plantes" } },
         };
         static void Main()
         {
@@ -735,7 +774,7 @@ namespace JeuDeCombat
                 {
                     Console.WriteLine();
                     IaValue.Block(JValue);
-                    actIA="L'Ia ce défend.";
+                    actIA = "L'Ia ce défend.";
                 }
             }
 
@@ -752,14 +791,14 @@ namespace JeuDeCombat
                 {
                     Console.WriteLine();
                     IaValue.SimpleAttack(JValue);
-                    actIA="L'Ia utilise une simple attaque.";
+                    actIA = "L'Ia utilise une simple attaque.";
                 }
             }
             if (cj == 3 || cia == 3)
             {
                 if (cj == 3)
                 {
-                    actJ= DisplayChoixSpe(JValue, IaValue);
+                    actJ = DisplayChoixSpe(JValue, IaValue);
 
                     //var ran = new Random();
                     //int ranAtSp = ran.Next(1, 4);
@@ -866,7 +905,8 @@ namespace JeuDeCombat
                 1280,
                 1050,
                 1300,
-                850
+                850,
+                1100
             };
             List<int> attaqueList = new List<int>
             {
@@ -876,7 +916,8 @@ namespace JeuDeCombat
                 70,
                 85,
                 50,
-                45
+                45,
+                40
             };
             List<int> armorList = new List<int>
             {
@@ -886,7 +927,8 @@ namespace JeuDeCombat
                 25,
                 23,
                 13,
-                30
+                30,
+                45
             };
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
@@ -918,6 +960,11 @@ namespace JeuDeCombat
                 Console.WriteLine("5 - Daicy");
                 Console.WriteLine("6 - Bill");
                 Console.WriteLine("7 - Silver");
+                Console.WriteLine("8 - Eilli");
+                Console.WriteLine("9 - Xyns");
+                Console.WriteLine("10- Daicy");
+                Console.WriteLine("11- Bill");
+                Console.WriteLine("12- Silver");
                 playerRead = Int32.Parse(Console.ReadLine());
                 if (playerRead > 0 && playerRead <= Classe.Count)
                 {
