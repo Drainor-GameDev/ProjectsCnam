@@ -13,7 +13,7 @@ namespace JeuDeCombat
         int defence;
         int armor;
         int hp, maxHp;
-        bool sendBack = false;
+        bool sendBack = false, ceFameuxBill = false;
         List<Buff> buffs = new List<Buff>();
 
         public charactersActionValue(Tuple<string, int, int, int> _classe, string _name)
@@ -256,6 +256,73 @@ namespace JeuDeCombat
                                 break;
                         }
                         break;
+                    case "Bill":
+                        switch (selectedSpecial)
+                        {
+                            case 1:
+                                if (!ceFameuxBill)
+                                {
+                                    ceFameuxBill = true;
+                                    bufftemp = new Buff(1, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                }
+                                else
+                                {
+                                    ceFameuxBill = false;
+                                    bufftemp = new Buff(1, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                    selectedSpecial = 4;
+                                }
+                                break;
+                            case 2:
+                                if (!ceFameuxBill)
+                                {
+                                    bufftemp = new Buff(2, this, other);
+                                    bufftemp.stun = true;
+                                    buffs.Add(bufftemp);
+                                    bufftemp = new Buff(10, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                }
+                                else
+                                {
+                                    bufftemp = new Buff(3, this, other);
+                                    bufftemp.bonusDmg = 30;
+                                    buffs.Add(bufftemp);
+                                    DoDmgToOther(damage, other, true);
+                                    bufftemp = new Buff(12, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                    selectedSpecial = 5;
+                                }
+                                break;
+                            case 3:
+                                if (!ceFameuxBill)
+                                {
+                                    bufftemp = new Buff(3, this, other);
+                                    bufftemp.defence = 15;
+                                    buffs.Add(bufftemp);
+                                    bufftemp = new Buff(3, this, other);
+                                    bufftemp.bonusDmg = 30;
+                                    buffs.Add(bufftemp);
+                                    bufftemp = new Buff(14, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                }
+                                else
+                                {
+                                    DoDmgToOther(damage/3, other, true);
+                                    AddHp(damage / 2);
+                                    bufftemp = new Buff(10, this, other);
+                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    buffs.Add(bufftemp);
+                                    selectedSpecial = 6;
+                                }
+                                break;
+                        }
+                        break;
                 }
                 Console.WriteLine(name + " utilise: " + Program.Spells[classe][selectedSpecial - 1]);
                 return true;
@@ -322,12 +389,22 @@ namespace JeuDeCombat
             }
             return false;
         }
+
+        public bool Glasses()
+        {
+            foreach (Buff buff in buffs)
+            {
+                if (buff.ceFameuxBill && buff.activate)
+                    return true;
+            }
+            return false;
+        }
     }
 
     class Buff
     {
         public int turn = 0, bonusDmg = 0, dmgToOther = 0, armorReduce = 0, defence = 0;
-        public bool ignoreDef = false, block = false, activate = true, stun = false;
+        public bool ignoreDef = false, block = false, activate = true, stun = false, ceFameuxBill = false;
         public List<bool> cooldown = new List<bool> { false, false, false };
         public charactersActionValue ally, enemy;
         public Buff(int _turn, charactersActionValue _ally, charactersActionValue _enemy)
@@ -352,7 +429,8 @@ namespace JeuDeCombat
             "Kolyma",
             "Zelote",
             "Xyns",
-            "Daicy"
+            "Daicy",
+            "Bill"
 
         };
         public static Dictionary<string, List<string>> Spells = new Dictionary<string, List<string>>
@@ -361,7 +439,8 @@ namespace JeuDeCombat
             {"Kolyma", new List<string>{ "Soin Immédiat", "Pacification", "Jardin Hostile" } },
             {"Zelote", new List<string>{ "Jet du Bouclier", "Blocage" ,"Destruction des défenses"} },
             {"Xyns", new List<string>{ "Espadon de Givre", "Aiguille aqueuse", "Bulle d’eau" } },
-            {"Daicy", new List<string>{ "Invisibilité", "Frelon de Flamme", "Lance Incandescente" } }
+            {"Daicy", new List<string>{ "Invisibilité", "Frelon de Flamme", "Lance Incandescente" } },
+            {"Bill", new List<string>{ "Lentille Mécanique", "Endormissement", "Sérénité", "Lentille Mécanique", "Fureur du Commandant", "Donnant Donnant" } }
         };
         static void Main()
         {
@@ -458,7 +537,7 @@ namespace JeuDeCombat
 
                 playerChar = DisplayClass();
 
-                charactersActionValue playerCharacter = new charactersActionValue(Classes(playerChar),"Joueur");
+                charactersActionValue playerCharacter = new charactersActionValue(Classes(playerChar), "Joueur");
 
                 int verdict = IA(Classe.Count() + 1);
 
@@ -599,8 +678,7 @@ namespace JeuDeCombat
                 if (cj == 3)
                 {
                     DisplayChoixSpe(JValue, IaValue);
-                    Console.WriteLine();
-                    
+
                     //var ran = new Random();
                     //int ranAtSp = ran.Next(1, 4);
 
@@ -700,7 +778,8 @@ namespace JeuDeCombat
                 950,
                 1850,
                 1280,
-                1050
+                1050,
+                1300
             };
             List<int> attaqueList = new List<int>
             {
@@ -708,7 +787,8 @@ namespace JeuDeCombat
                 40,
                 35,
                 70,
-                85
+                85,
+                50
             };
             List<int> armorList = new List<int>
             {
@@ -716,7 +796,8 @@ namespace JeuDeCombat
                 17,
                 55,
                 25,
-                23
+                23,
+                13
             };
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
@@ -746,6 +827,7 @@ namespace JeuDeCombat
                 Console.WriteLine("3 - Zelote");
                 Console.WriteLine("4 - Xyns");
                 Console.WriteLine("5 - Daicy");
+                Console.WriteLine("6 - Bill");
                 playerRead = Int32.Parse(Console.ReadLine());
                 if (playerRead > 0 && playerRead <= Classe.Count)
                 {
@@ -822,7 +904,7 @@ namespace JeuDeCombat
             }
             return cont;
         }
-        
+
         static void DisplayChoixSpe(charactersActionValue Value, charactersActionValue Ennemi)
         {
             int playerRead = 0;
@@ -844,7 +926,7 @@ namespace JeuDeCombat
                     }
                 }
             }
-         return;
+            return;
         }
     }
 }
