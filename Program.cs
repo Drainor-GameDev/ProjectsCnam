@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
@@ -13,7 +13,7 @@ namespace JeuDeCombat
         int defence;
         int armor;
         int hp, maxHp;
-        bool sendBack = false, ceFameuxBill = false;
+        public bool sendBack = false, ceFameuxBill = false;
         List<Buff> buffs = new List<Buff>();
 
         public charactersActionValue(Tuple<string, int, int, int> _classe, string _name)
@@ -106,7 +106,7 @@ namespace JeuDeCombat
             return armortemp;
         }
 
-        public bool DoSpecial(charactersActionValue other, int selectedSpecial)
+        public bool DoSpecial(charactersActionValue other, int selectedSpecial, out string texte)
         {
             //selectedSpecial--;
             if (CheckCD(selectedSpecial) == 0 && selectedSpecial != 0)
@@ -313,7 +313,7 @@ namespace JeuDeCombat
                                 }
                                 else
                                 {
-                                    DoDmgToOther(damage/3, other, true);
+                                    DoDmgToOther(damage / 3, other, true);
                                     AddHp(damage / 2);
                                     bufftemp = new Buff(10, this, other);
                                     bufftemp.cooldown[selectedSpecial - 1] = true;
@@ -324,11 +324,12 @@ namespace JeuDeCombat
                         }
                         break;
                 }
-                Console.WriteLine(name + " utilise: " + Program.Spells[classe][selectedSpecial - 1]);
+                texte = name + " utilise: " + Program.Spells[classe][selectedSpecial - 1];
                 return true;
             }
             else
             {
+                texte = "";
                 return false;
             }
         }
@@ -639,7 +640,8 @@ namespace JeuDeCombat
         }
         static void Priorite(charactersActionValue JValue, charactersActionValue IaValue, int cj, int cia)
         {
-
+            string actJ = "";
+            string actIa = "";
 
             if (cj == 2 || cia == 2)
             {
@@ -647,13 +649,13 @@ namespace JeuDeCombat
                 {
                     Console.WriteLine();
                     JValue.Block(IaValue);
-                    Console.WriteLine("Le Joueur ce défend.");
+                    actJ="Le Joueur ce défend.";
                 }
                 if (cia == 2)
                 {
                     Console.WriteLine();
                     IaValue.Block(JValue);
-                    Console.WriteLine("L'Ia ce défend.");
+                    actIa = "L'Ia ce défend.";
                 }
             }
 
@@ -664,20 +666,20 @@ namespace JeuDeCombat
                 {
                     Console.WriteLine();
                     JValue.SimpleAttack(IaValue);
-                    Console.WriteLine("Le Joueur utilise une simple attaque.");
+                    actJ = "Le Joueur utilise une simple attaque.";
                 }
                 if (cia == 1)
                 {
                     Console.WriteLine();
                     IaValue.SimpleAttack(JValue);
-                    Console.WriteLine("L'Ia utilise une simple attaque.");
+                    actIa = "L'Ia utilise une simple attaque.";
                 }
             }
             if (cj == 3 || cia == 3)
             {
                 if (cj == 3)
                 {
-                    DisplayChoixSpe(JValue, IaValue);
+                    actJ = DisplayChoixSpe(JValue, IaValue);
 
                     //var ran = new Random();
                     //int ranAtSp = ran.Next(1, 4);
@@ -711,7 +713,7 @@ namespace JeuDeCombat
                         }
                     }
 
-                    IaValue.DoSpecial(JValue, ranAtSp);
+                    IaValue.DoSpecial(JValue, ranAtSp, out actIa);
                 }
             }
             if (cj == 0 || cia == 0)
@@ -720,14 +722,17 @@ namespace JeuDeCombat
                 if (cj == 0)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("Le Joueur a été assomé pour ce tours");
+                    actJ="Le Joueur a été assomé pour ce tours";
                 }
                 if (cia == 0)
                 {
                     Console.WriteLine();
-                    Console.WriteLine("L'Ia a été assomé pour ce tours");
+                    actIa="L'Ia a été assomé pour ce tours";
                 }
             }
+
+            Console.WriteLine(actJ);
+            Console.WriteLine(actIa);
         }
 
 
@@ -740,6 +745,7 @@ namespace JeuDeCombat
 
         static void IATurn(charactersActionValue player, charactersActionValue IAplayer)
         {
+            string act = "";
             int iamoov;
             iamoov = IA(4);
 
@@ -762,7 +768,7 @@ namespace JeuDeCombat
             {
                 var ran = new Random();
                 int ranAtSp = ran.Next(1, 4);
-                IAplayer.DoSpecial(player, ranAtSp);
+                IAplayer.DoSpecial(player, ranAtSp,out act);
 
                 Console.WriteLine("L'IA a décidé de faire l'attaque spéciale n°" + ranAtSp);
             }
@@ -905,28 +911,38 @@ namespace JeuDeCombat
             return cont;
         }
 
-        static void DisplayChoixSpe(charactersActionValue Value, charactersActionValue Ennemi)
+        static string DisplayChoixSpe(charactersActionValue Value, charactersActionValue Ennemi)
         {
+            string act = "";
             int playerRead = 0;
             bool playerReturn = false;
             while (!playerReturn || Value.CheckCD(playerRead) > 0)
             {
+
                 Console.WriteLine("Choix Attaque Spécial :");
                 Console.WriteLine($"1 - {Spells[Value.GetClass()][0]} (CD : {Value.CheckCD(1)})");
-                Console.WriteLine($"2 - {Spells[Value.GetClass()][1]} (CD : {Value.CheckCD(2)})");
-                Console.WriteLine($"3 - {Spells[Value.GetClass()][2]} (CD : {Value.CheckCD(3)})");
+                if(Value.ceFameuxBill == true)
+                {
+                    Console.WriteLine($"2 - {Spells[Value.GetClass()][4]} (CD : {Value.CheckCD(2)})");
+                    Console.WriteLine($"3 - {Spells[Value.GetClass()][5]} (CD : {Value.CheckCD(3)})");
+                }
+                else
+                {
+                    Console.WriteLine($"2 - {Spells[Value.GetClass()][1]} (CD : {Value.CheckCD(2)})");
+                    Console.WriteLine($"3 - {Spells[Value.GetClass()][2]} (CD : {Value.CheckCD(3)})");
+                }
                 Console.WriteLine("Choix :");
                 playerRead = Int32.Parse(Console.ReadLine());
                 if (playerRead > 0 && playerRead <= 3)
                 {
-                    if (Value.DoSpecial(Ennemi, playerRead) == true)
+                    if (Value.DoSpecial(Ennemi, playerRead, out act) == true)
                     {
                         playerReturn = true;
-                        break;
+                        return act;
                     }
                 }
             }
-            return;
+            return act;
         }
     }
 }
