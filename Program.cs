@@ -256,6 +256,7 @@ namespace JeuDeCombat
                         }
                         break;
                 }
+                Console.WriteLine(Program.Spells[classe][selectedSpecial - 1]);
                 return true;
             }
             else
@@ -315,7 +316,7 @@ namespace JeuDeCombat
         {
             foreach (Buff buff in buffs)
             {
-                if (buff.stun)
+                if (buff.stun && buff.activate)
                     return true;
             }
             return false;
