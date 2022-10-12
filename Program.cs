@@ -24,6 +24,12 @@ namespace JeuDeCombat
             armor = _classe.Item4;
             hp = maxHp;
             name = _name;
+            if (classe == "Silver")
+            {
+                Buff bufftemp = new Buff(20, this);
+                bufftemp.cooldown[2] = true;
+                buffs.Add(bufftemp);
+            }
         }
 
         public void Kill()
@@ -367,7 +373,7 @@ namespace JeuDeCombat
                                     bufftemp = new Buff(6, this, other);
                                     bufftemp.dmgToOther = 30;
                                     buffs.Add(bufftemp);
-                                    bufftemp = new Buff(12, this, other);
+                                    bufftemp = new Buff(20, this, other);
                                     bufftemp.cooldown[selectedSpecial - 1] = true;
                                     buffs.Add(bufftemp);
                                     selectedSpecial = 5;
@@ -376,21 +382,18 @@ namespace JeuDeCombat
                             case 3:
                                 if (!silvered)
                                 {
-                                    bufftemp = new Buff(3, this, other);
-                                    bufftemp.defence = 15;
-                                    buffs.Add(bufftemp);
-                                    bufftemp = new Buff(3, this, other);
-                                    bufftemp.bonusDmg = 30;
-                                    buffs.Add(bufftemp);
-                                    bufftemp = new Buff(14, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
-                                    buffs.Add(bufftemp);
+                                    damage += 30;
+                                    armor += 10;
+                                    AddHp(250);
+                                    silvered = true;
                                 }
                                 else
                                 {
-                                    DoDmgToOther(damage / 3, other, true);
-                                    AddHp(damage / 2);
-                                    bufftemp = new Buff(10, this, other);
+                                    DoDmgToOther(300, other, true);
+                                    bufftemp = new Buff(2, this, other);
+                                    bufftemp.block = true;
+                                    buffs.Add(bufftemp); 
+                                    bufftemp = new Buff(12, this, other);
                                     bufftemp.cooldown[selectedSpecial - 1] = true;
                                     buffs.Add(bufftemp);
                                     selectedSpecial = 6;
@@ -482,7 +485,7 @@ namespace JeuDeCombat
         public bool ignoreDef = false, block = false, activate = true, stun = false, ceFameuxBill = false;
         public List<bool> cooldown = new List<bool> { false, false, false };
         public charactersActionValue ally, enemy;
-        public Buff(int _turn, charactersActionValue _ally, charactersActionValue _enemy)
+        public Buff(int _turn, charactersActionValue _ally, charactersActionValue _enemy = null)
         {
             ally = _ally;
             enemy = _enemy;
@@ -490,7 +493,8 @@ namespace JeuDeCombat
         }
         public bool NewTurn()
         {
-            enemy.GetDmg(dmgToOther, ignoreDef);
+            if(dmgToOther > 0)
+                enemy.GetDmg(dmgToOther, ignoreDef);
             turn--;
             return turn == 0;
         }
@@ -855,7 +859,8 @@ namespace JeuDeCombat
                 1850,
                 1280,
                 1050,
-                1300
+                1300,
+                850
             };
             List<int> attaqueList = new List<int>
             {
@@ -864,7 +869,8 @@ namespace JeuDeCombat
                 35,
                 70,
                 85,
-                50
+                50,
+                45
             };
             List<int> armorList = new List<int>
             {
@@ -873,7 +879,8 @@ namespace JeuDeCombat
                 55,
                 25,
                 23,
-                13
+                13,
+                30
             };
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
