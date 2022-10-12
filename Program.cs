@@ -1129,14 +1129,15 @@ namespace JeuDeCombat
         {
             int playerRead = 0;
             bool playerReturn = false;
-            while (!playerReturn)
+            bool passe = false;
+            while (!playerReturn || !passe)
             {
                 Console.WriteLine("Actions possibles :");
                 Console.WriteLine("1 - Attaquer");
                 Console.WriteLine("2 - Défendre");
                 Console.WriteLine("3 - Action spéciale");
                 Console.WriteLine("Choix :");
-                playerRead = Int32.Parse(Console.ReadLine());
+                passe = int.TryParse(Console.ReadLine(), out playerRead);
                 if (playerRead > 0 && playerRead <= 3)
                 {
                     if (playerRead == 3 && Value.CheckCD(1) > 0 && Value.CheckCD(2) > 0 && Value.CheckCD(3) > 0)
