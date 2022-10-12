@@ -824,6 +824,7 @@ namespace JeuDeCombat
             }
             return cont;
         }
+        
         static void DisplayChoixSpe(charactersActionValue Value, charactersActionValue Ennemi)
         {
             int playerRead = 0;
@@ -831,9 +832,9 @@ namespace JeuDeCombat
             while (!playerReturn || Value.CheckCD(playerRead) > 0)
             {
                 Console.WriteLine("Choix Attaque Spécial :");
-                Console.WriteLine($"1 - 1er Attaque Spe (CD : {Value.CheckCD(1)})");
-                Console.WriteLine($"2 - 2eme Attaque Spe (CD : {Value.CheckCD(2)})");
-                Console.WriteLine($"3 - 3eme Attaque Spe (CD : {Value.CheckCD(3)})");
+                Console.WriteLine($"1 - {Spells[Value.GetClass()][0]} (CD : {Value.CheckCD(1)})");
+                Console.WriteLine($"2 - {Spells[Value.GetClass()][1]} (CD : {Value.CheckCD(2)})");
+                Console.WriteLine($"3 - {Spells[Value.GetClass()][2]} (CD : {Value.CheckCD(3)})");
                 Console.WriteLine("Choix :");
                 playerRead = Int32.Parse(Console.ReadLine());
                 if (playerRead > 0 && playerRead <= 3)
@@ -845,7 +846,7 @@ namespace JeuDeCombat
                     }
                 }
             }
-            return;
+         return;
         }
     }
 }
