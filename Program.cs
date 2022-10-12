@@ -600,8 +600,7 @@ namespace JeuDeCombat
                 {
                     DisplayChoixSpe(JValue, IaValue);
                     Console.WriteLine();
-                    Console.WriteLine("Le Joueur fait une attaque spécial.");
-
+                    
                     //var ran = new Random();
                     //int ranAtSp = ran.Next(1, 4);
 
@@ -635,7 +634,6 @@ namespace JeuDeCombat
                     }
 
                     IaValue.DoSpecial(JValue, ranAtSp);
-                    Console.WriteLine("L'IA a décidé de faire l'attaque spéciale n°" + ranAtSp);
                 }
             }
             if (cj == 0 || cia == 0)
