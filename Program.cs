@@ -14,7 +14,7 @@ namespace JeuDeCombat
         public int defence;
         public int armor;
         public int hp, maxHp;
-        public bool sendBack = false, healBack = false, silvered = false;
+        public bool sendBack = false, healBack = false, silvered = false, isPlayer = false;
         List<Buff> buffs = new List<Buff>();
 
         public charactersActionValue(Tuple<string, int, int, int> _classe, string _name)
@@ -31,7 +31,7 @@ namespace JeuDeCombat
                 bufftemp.cooldown[2] = true;
                 buffs.Add(bufftemp);
             }
-            if (classe == "Jamii")
+            if (classe == "Jamy")
             {
                 Buff bufftemp = new Buff(13, this);
                 bufftemp.cooldown[0] = true;
@@ -340,6 +340,8 @@ namespace JeuDeCombat
                                 }
                                 break;
                         }
+                        if(isPlayer)
+                            Program.GameSoundPlayer(@"D:\Ce_vieux_Bill_Sound.mp3");
                         break;
                     case "Silver":
                         switch (selectedSpecial)
@@ -527,8 +529,10 @@ namespace JeuDeCombat
                                 buffs.Add(bufftemp);
                                 break;
                         }
+                        if(isPlayer)
+                            Program.GameSoundPlayer(@"D:\LeeroyJenkinsSound.mp3");
                         break;
-                    case "Jamii":
+                    case "Jamy":
                         switch (selectedSpecial)
                         {
                             case 0:
@@ -536,6 +540,8 @@ namespace JeuDeCombat
                                 bufftemp = new Buff(2, this, other);
                                 bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
+                                if(isPlayer)
+                                    Program.GameSoundPlayer(@"D:\EnormeSound.mp3");
                                 break;
                             case 1:
                                 sendBack = true;
@@ -543,6 +549,8 @@ namespace JeuDeCombat
                                 bufftemp = new Buff(13, this, other);
                                 bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
+                                if (isPlayer)
+                                    Program.GameSoundPlayer(@"D:\Chauffe_Marcel.mp3");
                                 break;
                             case 2:
                                 healBack = true;
@@ -552,6 +560,8 @@ namespace JeuDeCombat
                                 bufftemp = new Buff(6, this, other);
                                 bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
+                                if (isPlayer)
+                                    Program.GameSoundPlayer(@"D:\Mais_dis_donc_Jamy.mp3");
                                 break;
                         }
                         break;
@@ -671,7 +681,7 @@ namespace JeuDeCombat
         public void DisplayOption(int xPos, int yPos, int _index)
         {
             string[] optionDisplay = new string[options.Count];
-            manager.DisplayOnScreen(xPos,yPos - 2,prompt,isCenter);
+            manager.DisplayOnScreen(xPos, yPos - 2, prompt, isCenter);
             for (int i = 0; i < options.Count; i++)
             {
                 if (i == _index)
@@ -699,16 +709,19 @@ namespace JeuDeCombat
                 if (keyPressed == ConsoleKey.UpArrow)
                 {
                     _index--;
+                    Program.GameSoundPlayer(@"D:\SwipeButton.mp3");
                     //Changement Bouton
                 }
                 if (keyPressed == ConsoleKey.DownArrow)
                 {
                     _index++;
+                    Program.GameSoundPlayer(@"D:\SwipeButton.mp3");
                     //Cnahgement Bouton
                 }
                 if (_index < 0)
                 {
                     _index = options.Count - 1;
+                    Program.GameSoundPlayer(@"D:\SwipeButton.mp3");
                 }
                 _index %= options.Count;
             }
@@ -746,10 +759,10 @@ namespace JeuDeCombat
             toDisplay.Add("Armure : " + armor.ToString());
             for (int i = 0; i < actionSpe.Count; i++)
             {
-            toDisplay.Add("Attaque Spéciale n°"+(i+1)+" : " + actionSpe[i]);
+                toDisplay.Add("Attaque Spéciale n°" + (i + 1) + " : " + actionSpe[i]);
 
             }
-           // toDisplay.Add("Attaque Spéciale n°2 : " + actionSpe[1]);
+            // toDisplay.Add("Attaque Spéciale n°2 : " + actionSpe[1]);
             //toDisplay.Add("Attaque Spéciale n°3 : " + actionSpe[2]);
         }
         public void DisplayClassData(int xPos, int yPos, Tuple<string, int, int, int> classData, List<string> actionSpe)
@@ -810,7 +823,7 @@ namespace JeuDeCombat
             "Beltrame",
             "Akuri",
             "Leeroy Jenkins",
-            "Jamii",
+            "Jamy",
         };
         public static Dictionary<string, List<string>> Spells = new Dictionary<string, List<string>>
         {
@@ -825,10 +838,11 @@ namespace JeuDeCombat
             {"Beltrame", new List<string>{ "Aile de Glace", "Chaîne des Ombre", "Orgue Primordial" } },
             {"Akuri", new List<string>{ "Etoile Central", "Pluie d'astéroïdes", "Barrière de Sel" } },
             {"Leeroy Jenkins", new List<string>{ "LEEROY JENKINS!!!", "LEEROY JENKINS!!!!!!", "LEEROY JENKINS!!!!!!!!" } },
-            {"Jamii", new List<string>{ "ÉNORME !!!", "Chauffe Marcel !!!", "DIT MOI JAMI!!!" } }
+            {"Jamy", new List<string>{ "ÉNORME !!!", "Chauffe Marcel !!!", "DIT MOI JAMY!!!" } }
         };
         static void Main()
         {
+            GameSoundPlayer(@"D:\Darude.mp3");
             DisplayInit();
             GameManager();
             //TestStats();
@@ -912,6 +926,7 @@ namespace JeuDeCombat
             //je vais faire des tour , voila
             #region Affichage
             //Menu de base
+
             manager.AddDisplay(DisplayIntro);
             manager.Display();
             DisplayGlobaleMenu(ref index);
@@ -928,7 +943,8 @@ namespace JeuDeCombat
                 index = 0;
                 DisplayClassMenu(ref index, Classe, "Joueur 1");
                 List<string> spells = SetSpellList(index);
-                charactersActionValue player = new charactersActionValue(Classes(index), "Joueur");
+                charactersActionValue player = new charactersActionValue(Classes(index), "Joueur 1");
+                player.isPlayer = true;
                 charactersActionValue ordi = null;
                 if (playmode == 1)
                 {
@@ -939,7 +955,7 @@ namespace JeuDeCombat
                     index = 0;
                     DisplayClassMenu(ref index, Classe, "Joueur 2");
                     spells = SetSpellList(index);
-                    ordi = new charactersActionValue(Classes(index), "Ordinateur");
+                    ordi = new charactersActionValue(Classes(index), "Joueur 2");
                 }
                 else
                     ordi = new charactersActionValue(Classes(IA(Classe.Count())), "Ordinateur");
@@ -964,7 +980,7 @@ namespace JeuDeCombat
                     {
                         index = 0;
                         if (!player.IsStunned())
-                            DisplayTurnChoice(ref index);
+                            DisplayTurnChoice(ref index, player.name);
 
                         if (index == 2)
                         {
@@ -974,7 +990,7 @@ namespace JeuDeCombat
                             {
                                 spells.Add((Spells[player.classe][i + (player.silvered ? 3 : 0)]) + " [" + player.CheckCD(i) + "]");
                             }
-                            DisplayChoixSpe(ref index, spells);
+                            DisplayChoixSpe(ref index, spells, player.name);
                             if (index != 3)
                             {
                                 playerSpeAction = index;
@@ -1003,7 +1019,7 @@ namespace JeuDeCombat
                         {
                             index = 0;
                             if (!ordi.IsStunned())
-                                DisplayTurnChoice(ref index);
+                                DisplayTurnChoice(ref index, ordi.name);
 
                             if (index == 2)
                             {
@@ -1013,7 +1029,7 @@ namespace JeuDeCombat
                                 {
                                     spells.Add((Spells[ordi.classe][i + (ordi.silvered ? 3 : 0)]) + " [" + ordi.CheckCD(i) + "]");
                                 }
-                                DisplayChoixSpe(ref index, spells);
+                                DisplayChoixSpe(ref index, spells, ordi.name);
                                 if (index != 3)
                                 {
                                     playerSpeAction = index;
@@ -1078,7 +1094,7 @@ namespace JeuDeCombat
             //Fin Boucle de Jeu
             #endregion
         }
-        static void Priorite(charactersActionValue player, charactersActionValue ordi, int joueurAction, int iaAction, int joueurSpe = 0,int iaSpe = 0)
+        static void Priorite(charactersActionValue player, charactersActionValue ordi, int joueurAction, int iaAction, int joueurSpe = 0, int iaSpe = 0)
         {
             //Se defend
             if (joueurAction == 1)
@@ -1095,7 +1111,7 @@ namespace JeuDeCombat
                 player.DoSpecial(ordi, joueurSpe);
             if (iaAction == 2)
                 ordi.DoSpecial(player, iaSpe);
-                //Console.WriteLine("[Joueur]" + joueurAction + " " + joueurSpe + "[Ordi]" + iaAction + " " + iaSpe + " CD " + ordi.CheckCD(0) + " " + ordi.CheckCD(1) + " " + ordi.CheckCD(2));
+            //Console.WriteLine("[Joueur]" + joueurAction + " " + joueurSpe + "[Ordi]" + iaAction + " " + iaSpe + " CD " + ordi.CheckCD(0) + " " + ordi.CheckCD(1) + " " + ordi.CheckCD(2));
             //Si action <= 0 character Assomé et ne joue pas
         }
 
@@ -1230,20 +1246,23 @@ namespace JeuDeCombat
 
         static void DisplayGlobaleMenu(ref int menuIndex)
         {
-            List<string> menuName = new List<string> { "JOUER", "QUITTER" };
+            List<string> menuName = new List<string> { "JOUER CONTRE L'IA", "JOUER JOUEUR VS JOUEUR", "QUITTER" };
             Menu mainMenu = new Menu("Bienvenue dans l'arène", menuName, manager, false);
             mainMenu.Run(Console.WindowWidth / 3, 20, ref menuIndex);
+            GameSoundPlayer(@"D:\SelectedButton.mp3");
         }
         static void DisplayClassMenu(ref int classIndex, List<string> option, string playerName = "")
         {
             Menu mainMenu = new Menu("Choisissez votre classe " + playerName, option, manager, false);
             mainMenu.Run(Console.WindowWidth / 3, 20, ref classIndex);
+            GameSoundPlayer(@"D:\SelectedButton.mp3");
         }
         static void DisplayReplayMenu(ref int replayIndex)
         {
             List<string> menuName = new List<string> { "REJOUER", "QUITTER" };
             Menu mainMenu = new Menu("Voulez-vous rejouer", menuName, manager, true);
             mainMenu.Run(Console.WindowWidth / 2, Console.WindowHeight / 2, ref replayIndex);
+            GameSoundPlayer(@"D:\SelectedButton.mp3");
         }
         //Fct qui affiche la manche avec son chiffre
         static void DisplayManche(int index)
@@ -1278,20 +1297,22 @@ namespace JeuDeCombat
             }
         }
         //Fct qui demande au joueur son action et la return en int
-        static void DisplayTurnChoice(ref int turnIndex)
+        static void DisplayTurnChoice(ref int turnIndex, string name)
         {
             List<string> menuName = new List<string> { "ATTAQUER", "DEFENDRE", "ACTION SPECIALE" };
-            Menu turnMenu = new Menu("", menuName, manager, true);
+            Menu turnMenu = new Menu(name + " que veut tu faire", menuName, manager, true);
             turnMenu.Run(Console.WindowWidth / 2, 11, ref turnIndex);
+            GameSoundPlayer(@"D:\SelectedButton.mp3");
         }
-        static void DisplayChoixSpe(ref int speIndex, List<string> _spellsList)
+        static void DisplayChoixSpe(ref int speIndex, List<string> _spellsList, string name)
         {
             List<string> menuName = _spellsList;
             menuName.Add("RETOUR");
-            Menu turnMenu = new Menu("", menuName, manager, true);
+            Menu turnMenu = new Menu(name + " que veut tu faire", menuName, manager, true);
             turnMenu.Run(Console.WindowWidth / 2, 11, ref speIndex);
+            GameSoundPlayer(@"D:\SelectedButton.mp3");
         }
-        static void DisplayResultAction(string name, bool isPlayer,int action, string actionSpe = "")
+        static void DisplayResultAction(string name, bool isPlayer, int action, string actionSpe = "")
         {
             string toDisplay = "[" + name + "] ";
             switch (action)
@@ -1311,40 +1332,49 @@ namespace JeuDeCombat
                 default:
                     break;
             }
-                manager.DisplayOnScreen(Console.WindowWidth/2, 30 + (!isPlayer?1:0), toDisplay, true);
+            manager.DisplayOnScreen(Console.WindowWidth / 2, 30 + (!isPlayer ? 1 : 0), toDisplay, true);
         }
-        static bool CheckEnd(charactersActionValue player,charactersActionValue ordi)
+        static bool CheckEnd(charactersActionValue player, charactersActionValue ordi)
         {
             int playerHp = player.hp, ordiHp = ordi.hp;
             if (playerHp <= 0 || ordiHp <= 0)
                 return true;
-            else 
+            else
                 return false;
         }
-        static void DisplayWinner(charactersActionValue player,charactersActionValue ordi)
+        static void DisplayWinner(charactersActionValue player, charactersActionValue ordi)
         {
             int playerHp = player.hp, ordiHp = ordi.hp;
             string winnerName = "";
-            if (playerHp > 0 && ordiHp <= 0) 
+            if (playerHp > 0 && ordiHp <= 0)
+            {
                 winnerName = player.name;
+                Program.GameSoundPlayer(@"D:\OSS117_-_jaime_me_battre_mp3cut.net.mp3");
+            }
             if (ordiHp > 0 && playerHp <= 0)
+            {
                 winnerName = ordi.name;
+                Program.GameSoundPlayer(@"D:\OSS_117_-_Tes_mauvais_Jack__mp3cut.net.mp3");
+            }
             if (winnerName != "")
                 manager.DisplayOnScreen(Console.WindowWidth / 2, 30, "Le Gagnant est " + winnerName, true);
             else
+            {
                 manager.DisplayOnScreen(Console.WindowWidth / 2, 30, "Egalité", true);
+                Program.GameSoundPlayer(@"D:\Vicetone__Tony_Igy_-_Astronomia_Medieval_Style_Bardcore_Tavern_Version.mp3");
+            }
         }
         static void WaitingKey()
         {
             do
-                manager.DisplayOnScreen(Console.WindowWidth / 2, 40, "Appuyer sur une touche pour continuer",true);
-            while (ReadKey(true) == null) ;
+                manager.DisplayOnScreen(Console.WindowWidth / 2, 40, "Appuyer sur une touche pour continuer", true);
+            while (ReadKey(true) == null);
         }
         #endregion
-        
+
         #region Audio
 
-        static void GameSoundPlayer(string play_string)
+        public static void GameSoundPlayer(string play_string)
         {
             var reader = new NAudio.Wave.Mp3FileReader(play_string); //On prépare la lecture
             var waveOut = new NAudio.Wave.WaveOutEvent();
