@@ -1332,19 +1332,19 @@ namespace JeuDeCombat
         {
             List<string> menuName = new List<string> { "ATTAQUER", "DEFENDRE", "ACTION SPECIALE" };
             Menu turnMenu = new Menu(name + " que veut tu faire", menuName, manager, true);
-            turnMenu.Run(Console.WindowWidth / 2, 11, ref turnIndex);
+            turnMenu.Run(Console.WindowWidth / 2, 13, ref turnIndex);
         }
         static void DisplayChoixSpe(ref int speIndex, List<string> _spellsList, string name)
         {
             List<string> menuName = _spellsList;
             menuName.Add("RETOUR");
             Menu turnMenu = new Menu(name + " que veut tu faire", menuName, manager, true);
-            turnMenu.Run(Console.WindowWidth / 2, 11, ref speIndex);
+            turnMenu.Run(Console.WindowWidth / 2, 13, ref speIndex);
         }
         static void DisplaySpeData(charactersActionValue player, ref int index)
         {
             if (index < 3)
-                manager.DisplayOnScreen(Console.WindowWidth / 2, 16, spellEffect[player.classe][index], true);
+                manager.DisplayOnScreen(Console.WindowWidth / 2, 18, spellEffect[player.classe][index], true);
         }
         static void DisplayResultAction(string name, bool isPlayer, int action, string actionSpe = "")
         {
