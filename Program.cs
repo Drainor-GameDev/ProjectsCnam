@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using System.Threading;
+using static System.Console;
 
 namespace JeuDeCombat
 {
@@ -13,7 +14,7 @@ namespace JeuDeCombat
         public int defence;
         public int armor;
         public int hp, maxHp;
-        public bool sendBack = false, healBack = false, ceFameuxBill = false, silvered = false;
+        public bool sendBack = false, healBack = false, silvered = false;
         List<Buff> buffs = new List<Buff>();
 
         public charactersActionValue(Tuple<string, int, int, int> _classe, string _name)
@@ -69,12 +70,12 @@ namespace JeuDeCombat
             {
                 if (ignoreDef)
                 {
-                    hp = hp - Math.Clamp(dmg - GetDefence(), 0, dmg);
+                    try { hp = hp - Math.Clamp(dmg - GetDefence(), 0, dmg); } catch { hp -= dmg; }
                 }
                 else
                 {
                     if (!GetBlock())
-                        hp = hp - Math.Clamp((int)(dmg * (1f - (GetArmor() / 100f))) + GetDefence(), 0, dmg);
+                        try { hp = hp - Math.Clamp((int)(dmg * (1f - (GetArmor() / 100f))) + GetDefence(), 0, dmg); } catch { hp -= dmg; }
                 }
             }
         }
@@ -123,10 +124,10 @@ namespace JeuDeCombat
             return armortemp;
         }
 
-        public bool DoSpecial(charactersActionValue other, int selectedSpecial, out string texte)
+        public bool DoSpecial(charactersActionValue other, int selectedSpecial)
         {
             //selectedSpecial--;
-            if (CheckCD(selectedSpecial) == 0 && selectedSpecial != 0)
+            if (CheckCD(selectedSpecial) == 0)
             {
                 Buff bufftemp;
                 switch (classe)
@@ -134,24 +135,24 @@ namespace JeuDeCombat
                     case "Bestraf":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 sendBack = true;
-                                bufftemp = new Buff(4, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp = new Buff(8, this, other);
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 2:
+                            case 1:
                                 bufftemp = new Buff(3, this, other);
                                 bufftemp.bonusDmg = 50;
                                 buffs.Add(bufftemp);
-                                bufftemp = new Buff(7, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp = new Buff(12, this, other);
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 3:
+                            case 2:
                                 DoDmgToOther(damage, other, true);
-                                bufftemp = new Buff(3, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp = new Buff(6, this, other);
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -159,26 +160,26 @@ namespace JeuDeCombat
                     case "Kolyma":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 AddHp(250);
-                                bufftemp = new Buff(5, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp = new Buff(14, this, other);
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 2:
+                            case 1:
                                 bufftemp = new Buff(5, this, other);
                                 bufftemp.bonusDmg = -30;
                                 other.buffs.Add(bufftemp);
                                 bufftemp = new Buff(12, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 3:
+                            case 2:
                                 bufftemp = new Buff(4, this, other);
                                 bufftemp.dmgToOther = 20;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(6, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -186,30 +187,30 @@ namespace JeuDeCombat
                     case "Zelote":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 bufftemp = new Buff(4, this, other);
                                 bufftemp.bonusDmg = 15;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(12, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 DoDmgToOther(damage, other);
                                 GetDmg(150);
                                 break;
-                            case 2:
+                            case 1:
                                 bufftemp = new Buff(2, this, other);
                                 bufftemp.block = true;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(7, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 3:
+                            case 2:
                                 bufftemp = new Buff(3, this, other);
                                 bufftemp.armorReduce = 50;
                                 other.buffs.Add(bufftemp);
                                 bufftemp = new Buff(10, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -217,28 +218,28 @@ namespace JeuDeCombat
                     case "Xyns":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 bufftemp = new Buff(2, this, other);
                                 bufftemp.bonusDmg = damage;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(7, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 2:
+                            case 1:
                                 bufftemp = new Buff(4, this, other);
                                 bufftemp.defence = 30;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(9, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 3:
+                            case 2:
                                 bufftemp = new Buff(2, this, other);
                                 bufftemp.stun = true;
                                 other.buffs.Add(bufftemp);
                                 bufftemp = new Buff(15, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -246,15 +247,15 @@ namespace JeuDeCombat
                     case "Daicy":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 bufftemp = new Buff(3, this, other);
                                 bufftemp.block = true;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(10, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 2:
+                            case 1:
                                 bufftemp = new Buff(2, this, other);
                                 bufftemp.stun = true;
                                 other.buffs.Add(bufftemp);
@@ -262,13 +263,13 @@ namespace JeuDeCombat
                                 bufftemp.dmgToOther = 25;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(13, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 3:
+                            case 2:
                                 DoDmgToOther(damage + 75, other);
                                 bufftemp = new Buff(9, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -276,31 +277,31 @@ namespace JeuDeCombat
                     case "Bill":
                         switch (selectedSpecial)
                         {
-                            case 1:
-                                if (!ceFameuxBill)
+                            case 0:
+                                if (!silvered)
                                 {
-                                    ceFameuxBill = true;
+                                    silvered = true;
                                     bufftemp = new Buff(1, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                 }
                                 else
                                 {
-                                    ceFameuxBill = false;
+                                    silvered = false;
                                     bufftemp = new Buff(1, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                     selectedSpecial = 4;
                                 }
                                 break;
-                            case 2:
-                                if (!ceFameuxBill)
+                            case 1:
+                                if (!silvered)
                                 {
                                     bufftemp = new Buff(2, this, other);
                                     bufftemp.stun = true;
                                     other.buffs.Add(bufftemp);
                                     bufftemp = new Buff(10, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                 }
                                 else
@@ -310,13 +311,13 @@ namespace JeuDeCombat
                                     buffs.Add(bufftemp);
                                     DoDmgToOther(damage, other, true);
                                     bufftemp = new Buff(12, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                     selectedSpecial = 5;
                                 }
                                 break;
-                            case 3:
-                                if (!ceFameuxBill)
+                            case 2:
+                                if (!silvered)
                                 {
                                     bufftemp = new Buff(3, this, other);
                                     bufftemp.defence = 15;
@@ -325,7 +326,7 @@ namespace JeuDeCombat
                                     bufftemp.bonusDmg = 30;
                                     buffs.Add(bufftemp);
                                     bufftemp = new Buff(14, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                 }
                                 else
@@ -333,7 +334,7 @@ namespace JeuDeCombat
                                     DoDmgToOther(damage / 3, other, true);
                                     AddHp(damage / 2);
                                     bufftemp = new Buff(10, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                     selectedSpecial = 6;
                                 }
@@ -343,12 +344,12 @@ namespace JeuDeCombat
                     case "Silver":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 if (!silvered)
                                 {
                                     DoDmgToOther(damage + 20, other, true);
                                     bufftemp = new Buff(3, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                 }
                                 else
@@ -358,12 +359,12 @@ namespace JeuDeCombat
                                     other.buffs.Add(bufftemp);
                                     DoDmgToOther(110, other, true);
                                     bufftemp = new Buff(11, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                     selectedSpecial = 4;
                                 }
                                 break;
-                            case 2:
+                            case 1:
                                 if (!silvered)
                                 {
                                     bufftemp = new Buff(2, this, other);
@@ -373,7 +374,7 @@ namespace JeuDeCombat
                                     bufftemp.armorReduce = -20;
                                     buffs.Add(bufftemp);
                                     bufftemp = new Buff(10, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                 }
                                 else
@@ -385,12 +386,12 @@ namespace JeuDeCombat
                                     bufftemp.dmgToOther = 30;
                                     buffs.Add(bufftemp);
                                     bufftemp = new Buff(20, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                     selectedSpecial = 5;
                                 }
                                 break;
-                            case 3:
+                            case 2:
                                 if (!silvered)
                                 {
                                     damage += 30;
@@ -405,7 +406,7 @@ namespace JeuDeCombat
                                     bufftemp.block = true;
                                     buffs.Add(bufftemp);
                                     bufftemp = new Buff(12, this, other);
-                                    bufftemp.cooldown[selectedSpecial - 1] = true;
+                                    bufftemp.cooldown[selectedSpecial] = true;
                                     buffs.Add(bufftemp);
                                     selectedSpecial = 6;
                                 }
@@ -415,27 +416,27 @@ namespace JeuDeCombat
                     case "Eilli":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 healBack = true;
-                                bufftemp = new Buff(7, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp = new Buff(14, this, other);
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 2:
+                            case 1:
                                 bufftemp = new Buff(4, this, other);
                                 bufftemp.defence = 40;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(12, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 3:
+                            case 2:
                                 DoDmgToOther(40, other);
                                 bufftemp = new Buff(3, this, other);
                                 bufftemp.stun = true;
                                 other.buffs.Add(bufftemp);
                                 bufftemp = new Buff(15, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -443,15 +444,15 @@ namespace JeuDeCombat
                     case "Beltrame":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 bufftemp = new Buff(2, this, other);
                                 bufftemp.armorReduce = -20;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(7, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 2:
+                            case 1:
                                 bufftemp = new Buff(2, this, other);
                                 bufftemp.stun = true;
                                 other.buffs.Add(bufftemp);
@@ -459,10 +460,10 @@ namespace JeuDeCombat
                                 bufftemp.bonusDmg = 20;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(14, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 3:
+                            case 2:
                                 bufftemp = new Buff(3, this, other);
                                 bufftemp.stun = true;
                                 other.buffs.Add(bufftemp);
@@ -470,7 +471,7 @@ namespace JeuDeCombat
                                 bufftemp.dmgToOther = 40;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(16, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -478,24 +479,24 @@ namespace JeuDeCombat
                     case "Akuri":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 AddHp((int)GetArmor() * 2);
                                 bufftemp = new Buff(7, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
+                                buffs.Add(bufftemp);
+                                break;
+                            case 1:
+                                DoDmgToOther(50, other, true);
+                                bufftemp = new Buff(2, this, other);
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                             case 2:
-                                DoDmgToOther(50, other, true);
-                                bufftemp = new Buff(2, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
-                                buffs.Add(bufftemp);
-                                break;
-                            case 3:
                                 bufftemp = new Buff(3, this, other);
                                 bufftemp.armorReduce = -20;
                                 buffs.Add(bufftemp);
                                 bufftemp = new Buff(6, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -503,26 +504,26 @@ namespace JeuDeCombat
                     case "Leeroy Jenkins":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 DoDmgToOther(damage * 3, other);
                                 bufftemp = new Buff(7, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 2:
+                            case 1:
                                 bufftemp = new Buff(5, this, other);
                                 bufftemp.stun = true;
                                 other.buffs.Add(bufftemp);
                                 bufftemp = new Buff(30, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 3:
+                            case 2:
                                 armor = 0;
                                 GetDmg(40);
                                 damage += 70;
                                 bufftemp = new Buff(1, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
@@ -530,37 +531,36 @@ namespace JeuDeCombat
                     case "Jamii":
                         switch (selectedSpecial)
                         {
-                            case 1:
+                            case 0:
                                 other.hp = 1;
                                 bufftemp = new Buff(2, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 2:
+                            case 1:
                                 sendBack = true;
                                 DoDmgToOther(200, other);
                                 bufftemp = new Buff(13, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
-                            case 3:
+                            case 2:
                                 healBack = true;
                                 bufftemp = new Buff(2, this, other);
                                 bufftemp.armorReduce = 20;
                                 other.buffs.Add(bufftemp);
                                 bufftemp = new Buff(6, this, other);
-                                bufftemp.cooldown[selectedSpecial - 1] = true;
+                                bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
                                 break;
                         }
                         break;
                 }
-                texte = name + " utilise: " + Program.Spells[classe][selectedSpecial - 1];
                 return true;
             }
             else
             {
-                texte = "";
+                string texte = "";
                 return false;
             }
         }
@@ -569,10 +569,10 @@ namespace JeuDeCombat
         {
             foreach (Buff buff in buffs)
             {
-                if (buff.cooldown[selected - 1] && buff.activate)
+                if (buff.cooldown[selected] && buff.activate)
                     return buff.turn;
             }
-            if (selected == 0)
+            if (selected < 0)
                 return 100;
             return 0;
         }
@@ -653,9 +653,150 @@ namespace JeuDeCombat
             return turn == 0;
         }
     }
+    public class Menu
+    {
+        public string prompt;
+        public List<string> options = new List<string>();
+        public int index = 0;
+        public DisplayManager manager;
+        bool isCenter;
+        public Menu(string prompt, List<string> options, DisplayManager manager, bool isCenter)
+        {
+            this.prompt = prompt;
+            this.options = options;
+            this.index = 0;
+            this.manager = manager;
+            this.isCenter = isCenter;
+        }
+        public void DisplayOption(int xPos, int yPos, int _index)
+        {
+            string[] optionDisplay = new string[options.Count];
+            manager.DisplayOnScreen(xPos,yPos - 2,prompt,isCenter);
+            for (int i = 0; i < options.Count; i++)
+            {
+                if (i == _index)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                optionDisplay[i] = options[i];
+                manager.DisplayOnScreen(xPos, yPos + i, optionDisplay[i], isCenter);
+                Console.ResetColor();
+            }
+        }
+        public void Run(int xPos, int yPos, ref int _index)
+        {
+            ConsoleKey keyPressed;
+            do
+            {
+                manager.Display();
+                DisplayOption(xPos, yPos, _index);
+                ConsoleKeyInfo keyInfo = ReadKey();
+                keyPressed = keyInfo.Key;
+                if (keyPressed == ConsoleKey.UpArrow)
+                {
+                    _index--;
+                    //Changement Bouton
+                }
+                if (keyPressed == ConsoleKey.DownArrow)
+                {
+                    _index++;
+                    //Cnahgement Bouton
+                }
+                if (_index < 0)
+                {
+                    _index = options.Count - 1;
+                }
+                _index %= options.Count;
+            }
+            while (keyPressed != ConsoleKey.Enter && keyPressed != ConsoleKey.Spacebar);
+            //Selection Bouton
+        }
+    }
 
+    public class ClasseData
+    {
+        DisplayManager manager;
+        string nom;
+        int health;
+        int attaque;
+        int armor;
+        List<string> attaqueSpe;
+        List<string> toDisplay;
+
+        public ClasseData(DisplayManager _manager)
+        {
+            manager = _manager;
+        }
+        public void SetData(Tuple<string, int, int, int> _data, List<string> actionSpe)
+        {
+            nom = _data.Item1;
+            health = _data.Item2;
+            attaque = _data.Item3;
+            armor = _data.Item4;
+            //attaqueSpe = _attaqueSpe;
+
+            toDisplay = new List<string>();
+            toDisplay.Add("Nom : " + nom);
+            toDisplay.Add("Point de Vie : " + health.ToString());
+            toDisplay.Add("Attaque : " + attaque.ToString());
+            toDisplay.Add("Armure : " + armor.ToString());
+            for (int i = 0; i < actionSpe.Count; i++)
+            {
+            toDisplay.Add("Attaque Spéciale n°"+(i+1)+" : " + actionSpe[i]);
+
+            }
+           // toDisplay.Add("Attaque Spéciale n°2 : " + actionSpe[1]);
+            //toDisplay.Add("Attaque Spéciale n°3 : " + actionSpe[2]);
+        }
+        public void DisplayClassData(int xPos, int yPos, Tuple<string, int, int, int> classData, List<string> actionSpe)
+        {
+            SetData(classData, actionSpe);
+            //Beep(4000,2);
+            for (int i = 0; i < toDisplay.Count; i++)
+            {
+                manager.DisplayOnScreen(xPos, yPos + i, toDisplay[i], false);
+            }
+        }
+    }
+    public class DisplayManager
+    {
+        public List<Action> displayAction = new List<Action>();
+
+        public void Display()
+        {
+            Console.Clear();
+            foreach (Action action in displayAction)
+            {
+                action();
+            }
+        }
+        public void AddDisplay(Action action)
+        {
+            displayAction.Add(action);
+        }
+        public void RemoveDisplay(Action action)
+        {
+            displayAction.Remove(action);
+        }
+        public void ClearList()
+        {
+            displayAction.Clear();
+        }
+        public void DisplayOnScreen(int xPos, int yPos, string toDisplay, bool isCenter)
+        {
+            Console.SetCursorPosition(xPos - ((isCenter) ? (toDisplay.Length / 2) : 0), yPos);
+            Console.Write(toDisplay);
+        }
+    }
     class Program
     {
+        static public DisplayManager manager = new DisplayManager();
+        static public ClasseData classeData = new ClasseData(manager);
+        static public int index;
         static List<string> Classe = new List<string>
         {
             "Bestraf",
@@ -688,339 +829,259 @@ namespace JeuDeCombat
         };
         static void Main()
         {
+            DisplayInit();
             GameManager();
             //TestStats();
         }
-        static void TestStats()
-        {
-            int victoryCount1 = 0, virctoryCount2 = 0;
-            for (int i = 0; i < 1000; i++)
-            {
-                charactersActionValue AI1Character = new charactersActionValue(Classes(1), "IA1");
-                charactersActionValue AI2Character = new charactersActionValue(Classes(3), "IA2");
-                int nombreTour = 0;
-                while (true)
-                {
-                    nombreTour++;
+        /*   static void TestStats()
+           {
+               int victoryCount1 = 0, virctoryCount2 = 0;
+               for (int i = 0; i < 1000; i++)
+               {
+                   charactersActionValue AI1Character = new charactersActionValue(Classes(1), "IA1");
+                   charactersActionValue AI2Character = new charactersActionValue(Classes(3), "IA2");
+                   int nombreTour = 0;
+                   while (true)
+                   {
+                       nombreTour++;
 
-                    if (nombreTour == 100)
-                    {
-                        AI1Character.Kill();
-                        AI2Character.Kill();
-                    }
+                       if (nombreTour == 100)
+                       {
+                           AI1Character.Kill();
+                           AI2Character.Kill();
+                       }
 
-                    if (AI1Character.GetHp() <= 0 && AI2Character.GetHp() <= 0)
-                    {
-                        Console.WriteLine("Les Nullos on tout les deux Perdu");
-                        break;
-                    }
+                       if (AI1Character.GetHp() <= 0 && AI2Character.GetHp() <= 0)
+                       {
+                           Console.WriteLine("Les Nullos on tout les deux Perdu");
+                           break;
+                       }
 
-                    else if (AI1Character.GetHp() <= 0)
-                    {
-                        Console.WriteLine("Perdu, meilleurs Chance une prochaine fois");
-                        victoryCount1++;
-                        break;
-                    }
+                       else if (AI1Character.GetHp() <= 0)
+                       {
+                           Console.WriteLine("Perdu, meilleurs Chance une prochaine fois");
+                           victoryCount1++;
+                           break;
+                       }
 
-                    else if (AI2Character.GetHp() <= 0)
-                    {
-                        Console.WriteLine("GG, Tu as gagnÃ©");
-                        virctoryCount2++;
-                        break;
-                    }
-                    bool playerReturn = false;
-                    int iaspell = 0;
-                    while (!playerReturn)
-                    {
-                        iaspell = IA(4);
-                        if (iaspell == 3 && AI1Character.CheckCD(1) > 0 && AI1Character.CheckCD(2) > 0 && AI1Character.CheckCD(3) > 0)
-                        {
-                            playerReturn = false;
-                        }
-                        else
-                        {
-                            playerReturn = true;
-                        }
-                    }
-                    bool playerReturn2 = false;
-                    int iaspell2 = 0;
-                    while (!playerReturn2)
-                    {
-                        iaspell2 = IA(4);
-                        if (iaspell2 == 3 && AI2Character.CheckCD(1) > 0 && AI2Character.CheckCD(2) > 0 && AI2Character.CheckCD(3) > 0)
-                        {
-                            playerReturn2 = false;
-                        }
-                        else
-                        {
-                            playerReturn2 = true;
-                        }
-                    }
-                    Console.WriteLine(iaspell);
-                    Priorite(AI1Character, AI2Character, iaspell, iaspell2);
-                    DisplayHealth("", AI2Character, AI1Character);
-                    AI1Character.newTurn();
-                    AI2Character.newTurn();
-                }
-            }
-            Console.WriteLine("btm:" + victoryCount1 + "/ top:" + virctoryCount2);
-        }
+                       else if (AI2Character.GetHp() <= 0)
+                       {
+                           Console.WriteLine("GG, Tu as gagnÃ©");
+                           virctoryCount2++;
+                           break;
+                       }
+                       bool playerReturn = false;
+                       int iaspell = 0;
+                       while (!playerReturn)
+                       {
+                           iaspell = IA(4);
+                           if (iaspell == 3 && AI1Character.CheckCD(1) > 0 && AI1Character.CheckCD(2) > 0 && AI1Character.CheckCD(3) > 0)
+                           {
+                               playerReturn = false;
+                           }
+                           else
+                           {
+                               playerReturn = true;
+                           }
+                       }
+                       bool playerReturn2 = false;
+                       int iaspell2 = 0;
+                       while (!playerReturn2)
+                       {
+                           iaspell2 = IA(4);
+                           if (iaspell2 == 3 && AI2Character.CheckCD(1) > 0 && AI2Character.CheckCD(2) > 0 && AI2Character.CheckCD(3) > 0)
+                           {
+                               playerReturn2 = false;
+                           }
+                           else
+                           {
+                               playerReturn2 = true;
+                           }
+                       }
+                       Console.WriteLine(iaspell);
+                       Priorite(AI1Character, AI2Character, iaspell, iaspell2);
+                       DisplayHealth("", AI2Character, AI1Character);
+                       AI1Character.newTurn();
+                       AI2Character.newTurn();
+                   }
+               }
+               Console.WriteLine("btm:" + victoryCount1 + "/ top:" + virctoryCount2);
+           }*/
         static void GameManager()
         {
             //je vais faire des tour , voila
-
-            bool end = false;
-            while (end == false)
+            #region Affichage
+            //Menu de base
+            manager.AddDisplay(DisplayIntro);
+            manager.Display();
+            DisplayGlobaleMenu(ref index);
+            bool end = (index == 0) ? false : true;
+            while (!end)
             {
 
-                DisplayIntro();
-
-                int playerChar;
-                bool finDeParti = false;
-                int nombreTour = 0;
-
-                playerChar = DisplayClass();
-
-                charactersActionValue playerCharacter = new charactersActionValue(Classes(playerChar), "Joueur");
-
-                int verdict = IA(Classe.Count() + 1);
-
-                charactersActionValue IACharacter = new charactersActionValue(Classes(verdict), "IA");
-
-
-                while (finDeParti == false)
+                //Menu de selection de classe
+                manager.ClearList();
+                manager.AddDisplay(DisplayIntro);
+                manager.AddDisplay(delegate { classeData.DisplayClassData(Console.WindowWidth / 4 * 3, 20, Classes(index), SetSpellList(index)); });
+                manager.Display();
+                DisplayClassMenu(ref index, Classe);
+                List<string> spells = SetSpellList(index);
+                charactersActionValue player = new charactersActionValue(Classes(index), "Joueur");
+                charactersActionValue ordi = new charactersActionValue(Classes(IA(Classe.Count())), "Ordinateur");
+                //Mise En place des Tours
+                //Mise en place de la boucle de jeu
+                int nRound = 0;
+                manager.ClearList();
+                manager.AddDisplay(DisplayIntro);
+                manager.AddDisplay(delegate { DisplayManche(nRound); });
+                manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
+                manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
+                manager.Display();
+                //Boucle Princiaple
+                while (!CheckEnd(player, ordi))
                 {
-
-                    nombreTour++;
-
-                    if (nombreTour == 100)
+                    nRound++;
+                    bool choosedAction = false;
+                    int playerAction = -1, iaAction = -1;
+                    int playerSpeAction = 0,iaSpeAction = 0;
+                    //Partie Joueur
+                    while (!choosedAction)
                     {
-                        playerCharacter.Kill();
-                        IACharacter.Kill();
-                    }
+                        index = 0;
+                        if (!player.IsStunned())
+                            DisplayTurnChoice(ref index);
 
-                    if (playerCharacter.GetHp() <= 0 && IACharacter.GetHp() <= 0)
+                        if (index == 2)
+                        {
+                            index = 0;
+                            spells.Clear();
+                            for (int i = 0; i < Spells[Classe[index + 1]].Count; i++)
+                            {
+                                spells.Add((Spells[player.classe][i + (player.silvered ? 3 : 0)]) + " [" + player.CheckCD(i) + "]");
+                            }
+                            DisplayChoixSpe(ref index, spells);
+                            if (index != 3)
+                            {
+                                playerSpeAction = index;
+                                playerAction = 2;
+                                if(player.CheckCD(playerSpeAction)==0)
+                                    choosedAction = true;
+                            }
+                        }
+                        else
+                        {
+                            choosedAction = true;
+                            playerAction = index;
+                        }
+
+                    }
+                    if (player.IsStunned())
                     {
-                        Console.WriteLine("Les Nullos on tout les deux Perdu");
-                        break;
+                        playerAction = 3;
                     }
+                    //Partie Ordi
+                    choosedAction = false;
 
-                    else if (playerCharacter.GetHp() <= 0)
-                    {
-                        Console.WriteLine("Perdu, meilleurs Chance une prochaine fois");
-                        break;
-                    }
-
-                    else if (IACharacter.GetHp() <= 0)
-                    {
-                        Console.WriteLine("GG, Tu as gagnÃ©");
-                        break;
-                    }
-
-                    DisplayManche(nombreTour);
-
-                    DisplayHealth(playerCharacter.GetClass(), playerCharacter, IACharacter);
-
-                    int playermoov;
-
-                    if (playerCharacter.IsStunned() == true) playermoov = 0;
-                    else playermoov = DisplayTurnChoice(playerCharacter);
-
-                    Console.WriteLine();
-                    int iaspell;
-                    if (IACharacter.IsStunned() == true)
-                    {
-                        iaspell = 0;
-                    }
+                    if (ordi.IsStunned())
+                        iaAction = 3;
                     else
                     {
-                        iaspell = IA(4);
-                        bool playerReturn = false;
-
-                        while (!playerReturn)
+                        while (!choosedAction)
                         {
-                            iaspell = IA(4);
-                            if (iaspell == 3 && IACharacter.CheckCD(1) > 0 && IACharacter.CheckCD(2) > 0 && IACharacter.CheckCD(3) > 0)
+                            iaAction = IA(3);
+                            choosedAction = (iaAction == 2 && ordi.CheckCD(0) > 0 && ordi.CheckCD(1) > 0 && ordi.CheckCD(2) > 0) ? false : true;
+                        }
+                        if(iaAction == 2)
+                        {
+                            do
                             {
-                                playerReturn = false;
+                                iaSpeAction = IA(3);
+                                //Beep();
                             }
-                            else
-                            {
-                                playerReturn = true;
-                            }
+                            while(ordi.CheckCD(iaSpeAction)>0);
                         }
                     }
-
-
-                    Priorite(playerCharacter, IACharacter, playermoov, iaspell);
-
-                    playerCharacter.newTurn();
-                    IACharacter.newTurn();
-
-                    //Affichage encore du choix du joueur et de L'IA
-
-                    //Affichage des choix 
-                    //DisplayTurnResult(classeJ)
-
-
-                    //Application des heal 
-                    //Application des dÃ©gat
+                    Priorite(player, ordi, playerAction, iaAction,playerSpeAction,iaSpeAction);
+                    DisplayResultAction(player.name,true, playerAction, Spells[player.classe][playerSpeAction]);
+                    DisplayResultAction(ordi.name, false, iaAction, Spells[ordi.classe][iaSpeAction]);
+                    player.newTurn();
+                    ordi.newTurn();
+                    WaitingKey();
                 }
-
-                string rejouer = "n";
-                rejouer = DisplayRePlay();
-                if (rejouer == "n")
-                {
-                    end = true;
-                    Console.WriteLine("Barrez vous");
-                }
-                else
-                {
-                    Console.WriteLine("C'est reparti");
-                }
-
+                index = 0;
+                manager.ClearList();
+                manager.AddDisplay(DisplayIntro);
+                manager.Display();
+                DisplayWinner(player, ordi);
+                WaitingKey();
+                manager.Display();
+                DisplayReplayMenu(ref index);
+                end = index == 0 ? false : true;
             }
+            //Fin Boucle de Jeu
+            #endregion
         }
-        static void Priorite(charactersActionValue JValue, charactersActionValue IaValue, int cj, int cia)
+        static void Priorite(charactersActionValue player, charactersActionValue ordi, int joueurAction, int iaAction, int joueurSpe = 0,int iaSpe = 0)
         {
-            string actJ = "";
-            string actIA = "";
-
-            if (cj == 2 || cia == 2)
-            {
-                if (cj == 2)
-                {
-                    Console.WriteLine();
-                    JValue.Block(IaValue);
-                    actJ = "Le Joueur ce défend.";
-                }
-                if (cia == 2)
-                {
-                    Console.WriteLine();
-                    IaValue.Block(JValue);
-                    actIA = "L'Ia ce défend.";
-                }
-            }
-
-            if (cj == 1 || cia == 1)
-            {
-
-                if (cj == 1)
-                {
-                    Console.WriteLine();
-                    JValue.SimpleAttack(IaValue);
-                    actJ = "Le Joueur utilise une simple attaque.";
-                }
-                if (cia == 1)
-                {
-                    Console.WriteLine();
-                    IaValue.SimpleAttack(JValue);
-                    actIA = "L'Ia utilise une simple attaque.";
-                }
-            }
-            if (cj == 3 || cia == 3)
-            {
-                if (cj == 3)
-                {
-                    actJ = DisplayChoixSpe(JValue, IaValue);
-
-                    //var ran = new Random();
-                    //int ranAtSp = ran.Next(1, 4);
-
-                    //bool playerReturn = false;
-                    //while (!playerReturn || JValue.CheckCD(ranAtSp) > 0)
-                    //{
-                    //    ranAtSp = IA(4);
-                    //    if (JValue.CheckCD(ranAtSp) == 0)
-                    //    {
-                    //        playerReturn = true;
-                    //    }
-                    //}
-
-                    //JValue.DoSpecial(JValue, ranAtSp);
-                    //Console.WriteLine("le joueur n°" + ranAtSp);
-
-                }
-                if (cia == 3)
-                {
-                    var ran = new Random();
-                    int ranAtSp = ran.Next(1, 4);
-
-                    bool playerReturn = false;
-                    while (!playerReturn || IaValue.CheckCD(ranAtSp) > 0)
-                    {
-                        ranAtSp = IA(4);
-                        if (IaValue.CheckCD(ranAtSp) == 0)
-                        {
-                            playerReturn = true;
-                        }
-                    }
-
-                    IaValue.DoSpecial(JValue, ranAtSp, out actIA);
-                }
-            }
-            if (cj == 0 || cia == 0)
-            {
-
-                if (cj == 0)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("Le Joueur a été assomé pour ce tours");
-                }
-                if (cia == 0)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine("L'Ia a été assomé pour ce tours");
-                }
-            }
-
-            Console.WriteLine(actJ);
-            Console.WriteLine(actIA);
+            //Se defend
+            if (joueurAction == 1)
+                player.Block(ordi);
+            if (iaAction == 1)
+                ordi.Block(player);
+            //Attaque
+            if (joueurAction == 0)
+                player.SimpleAttack(ordi);
+            if (iaAction == 0)
+                ordi.SimpleAttack(player);
+            //DoSpeciale
+            if (joueurAction == 2)
+                player.DoSpecial(ordi, joueurSpe);
+            if (iaAction == 2)
+                ordi.DoSpecial(player, iaSpe);
+                //Console.WriteLine("[Joueur]" + joueurAction + " " + joueurSpe + "[Ordi]" + iaAction + " " + iaSpe + " CD " + ordi.CheckCD(0) + " " + ordi.CheckCD(1) + " " + ordi.CheckCD(2));
+            //Si action <= 0 character Assomé et ne joue pas
         }
-
 
         static int IA(int maxRandom)
         {
             var ran = new Random();
-            int choixBot = ran.Next(1, maxRandom);
+            int choixBot = ran.Next(0, maxRandom);
             return choixBot;
         }
 
-        static void IATurn(charactersActionValue player, charactersActionValue IAplayer)
-        {
-            string act;
-            int iamoov;
-            iamoov = IA(4);
+        /*  static void IATurn(charactersActionValue player, charactersActionValue IAplayer)
+          {
+              string act;
+              int iamoov;
+              iamoov = IA(4);
 
-            //attack
-            if (iamoov == 1)
-            {
-                IAplayer.SimpleAttack(player);
-                Console.WriteLine("L'IA a décidé d'attaquer !");
-            }
+              //attack
+              if (iamoov == 1)
+              {
+                  IAplayer.SimpleAttack(player);
+                  Console.WriteLine("L'IA a décidé d'attaquer !");
+              }
 
-            //block
-            if (iamoov == 2)
-            {
-                IAplayer.Block(player);
-                Console.WriteLine("L'IA a décidé de bloquer !");
-            }
+              //block
+              if (iamoov == 2)
+              {
+                  IAplayer.Block(player);
+                  Console.WriteLine("L'IA a décidé de bloquer !");
+              }
 
-            //attack spé
-            if (iamoov == 3)
-            {
-                var ran = new Random();
-                int ranAtSp = ran.Next(1, 4);
-                IAplayer.DoSpecial(player, ranAtSp, out act);
+              //attack spé
+              if (iamoov == 3)
+              {
+                  var ran = new Random();
+                  int ranAtSp = ran.Next(1, 4);
+                  IAplayer.DoSpecial(player, ranAtSp, out act);
 
-                Console.WriteLine("L'IA a décidé de faire l'attaque spéciale n°" + ranAtSp);
-            }
-        }
-
+                  Console.WriteLine("L'IA a décidé de faire l'attaque spéciale n°" + ranAtSp);
+              }
+          }*/
 
         static Tuple<string, int, int, int> Classes(int classeID)
         {
-            classeID--;
             List<int> pvList = new List<int>
             {
                 1200,
@@ -1069,157 +1130,159 @@ namespace JeuDeCombat
             return new Tuple<string, int, int, int>(Classe[classeID], pvList[classeID], attaqueList[classeID], armorList[classeID]);
         }
 
+        static List<string> SetSpellList(int index)
+        {
+            List<string> spells = new List<string>();
+            for (int i = 0; i < Spells[Classe[index]].Count; i++)
+            {
+                spells.Add(Spells[Classe[index]][i]);
+            }
+            return spells;
+        }
+        #region Affichage
         //Partie Affichage
-
-
+        static void DisplayInit()
+        {
+            //Console.SetWindowPosition(1,1);
+            Console.SetBufferSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
+            Console.SetWindowSize(Console.LargestWindowWidth - 1, Console.LargestWindowHeight - 1);
+            Console.Title = ("Jeu de Combat AAA");
+            //Console.SetCursorPosition(Console.LargestWindowWidth / 2, 0);
+            Console.CursorVisible = false;
+            //Console.SetWindowPosition(1,1);
+            Console.Clear();
+            //Console.Beep();
+        }
         //Partie Affichage
         //Fct qui affiche l'intro du jeu et msg d'acceuille
         static void DisplayIntro()
         {
-            //Affichage logo en ASCII ART
-            Console.WriteLine("+------------------------+");
-            Console.WriteLine("| Bienvenue dans l'arène |");
-            Console.WriteLine("+------------------------+");
+            List<string> menu = new List<string>();
+            menu.Add("   .-,  ,---.   .-. .-.     ,'|\"\\    ,---.       ,--,    .---.             ,---.     .--.    _______     .--.     .--.     .--.   \r");
+            menu.Add("   | |  | .-'   | | | |     | |\\ \\   | .-'     .' .')   / .-. )  |\\    /|  | .-.\\   / /\\ \\  |__   __|   / /\\ \\   / /\\ \\   / /\\ \\  \r");
+            menu.Add("   | |  | `-.   | | | |     | | \\ \\  | `-.     |  |(_)  | | |(_) |(\\  / |  | |-' \\ / /__\\ \\   )| |     / /__\\ \\ / /__\\ \\ / /__\\ \\ \r");
+            menu.Add("   | |  | .-'   | | | |     | |  \\ \\ | .-'     \\  \\     | | | |  (_)\\/  |  | |--. \\|  __  |  (_) |     |  __  | |  __  | |  __  | \r");
+            menu.Add("(`-' |  |  `--. | `-')|     /(|`-' / |  `--.    \\  `-.  \\ `-' /  | \\  / |  | |`-' /| |  |)|    | |     | |  |)| | |  |)| | |  |)| \r");
+            menu.Add(" \\_ )|  /( __.' `---(_)    (__)`--'  /( __.'     \\____\\  )---'   | |\\/| |  /( `--' |_|  (_)    `-'     |_|  (_) |_|  (_) |_|  (_) \r");
+            for (int i = 0; i < menu.Count; i++)
+            {
+                manager.DisplayOnScreen((Console.WindowWidth / 2), i, menu[i], true);
+            }
         }
         //Fct qui demande au joueur sa classe et la return en int
-        static int DisplayClass()
-        {
-            bool playerReturn = false;
-            int playerRead = 0;
-            while (!playerReturn)
-            {
-                Console.WriteLine("Veuillez choisir votre classe de personnage :");
-                Console.WriteLine("1 - Bestraf");
-                Console.WriteLine("2 - Kolyma");
-                Console.WriteLine("3 - Zelote");
-                Console.WriteLine("4 - Xyns");
-                Console.WriteLine("5 - Daicy");
-                Console.WriteLine("6 - Bill");
-                Console.WriteLine("7 - Silver");
-                Console.WriteLine("8 - Eilli");
-                Console.WriteLine("9 - Beltrame");
-                Console.WriteLine("10- Akuri");
-                Console.WriteLine("11- Leeroy Jenkins");
-                Console.WriteLine("12- Jamii");
-                playerRead = Int32.Parse(Console.ReadLine());
-                if (playerRead > 0 && playerRead <= Classe.Count)
-                {
-                    playerReturn = true;
 
-                }
-            }
-            return playerRead;
+        static void DisplayGlobaleMenu(ref int menuIndex)
+        {
+            List<string> menuName = new List<string> { "JOUER", "QUITTER" };
+            Menu mainMenu = new Menu("Bienvenue dans l'arène", menuName, manager, false);
+            mainMenu.Run(Console.WindowWidth / 3, 20, ref menuIndex);
+        }
+        static void DisplayClassMenu(ref int classIndex, List<string> option)
+        {
+            Menu mainMenu = new Menu("Choisissez votre classe", option, manager, false);
+            mainMenu.Run(Console.WindowWidth / 3, 20, ref classIndex);
+        }
+        static void DisplayReplayMenu(ref int replayIndex)
+        {
+            List<string> menuName = new List<string> { "REJOUER", "QUITTER" };
+            Menu mainMenu = new Menu("Voulez-vous rejouer", menuName, manager, true);
+            mainMenu.Run(Console.WindowWidth / 2, Console.WindowHeight / 2, ref replayIndex);
         }
         //Fct qui affiche la manche avec son chiffre
         static void DisplayManche(int index)
         {
-            string lenght = new String('-', index % 10);
-            Console.WriteLine("+---------" + lenght + "+");
-            Console.WriteLine("| Manche " + index + " |");
-            Console.WriteLine("+---------" + lenght + "+");
+            string lenght = new string('-', index.ToString().Length);
+            List<string> toDisplay = new List<string>();
+            toDisplay.Add("+---------" + lenght + "+");
+            toDisplay.Add("| Manche " + index + " |");
+            toDisplay.Add("+---------" + lenght + "+");
+            for (int i = 0; i < toDisplay.Count; i++)
+            {
+                manager.DisplayOnScreen((Console.WindowWidth / 2), 7 + i, toDisplay[i], true);
+            }
         }
-        //Fct qui affiche les PV actuelle du joueur et de L'IA
-        static void DisplayHealth(string playerName, charactersActionValue pValue, charactersActionValue iaValue)
+
+        static void DisplayCharacterData(charactersActionValue characterData, bool isPlayer)
         {
-            Console.WriteLine("[" + playerName + "][" + pValue.GetClass() + "] HP : " + pValue.GetHp().ToString());
-            Console.WriteLine("[IA][" + iaValue.GetClass() + "] HP : " + iaValue.GetHp().ToString());
+            string lenght = new string('-', 33);
+            int hp = characterData.hp;
+            int mapHp = characterData.maxHp;
+            List<string> toDisplay = new List<string>();
+            toDisplay.Add("+" + lenght + "+");
+            toDisplay.Add("| " + characterData.name + new String(' ', 31 - (characterData.name.Length + characterData.GetClass().Length)) + characterData.GetClass() + " |");
+            toDisplay.Add("| PV : [" + hp + "|" + mapHp + "] " + new string(' ', 9 - (hp.ToString().Length + mapHp.ToString().Length)) + " [" + new string('-', ((hp * 10) / mapHp)) + new string(' ', 10 - ((hp * 10) / mapHp)) + "] |");
+            toDisplay.Add("| ATTAQUE : [" + characterData.damage + "]" + new string(' ', 20 - characterData.damage.ToString().Length) + "|");
+            toDisplay.Add("| ARMURE : [" + characterData.armor + "]" + new string(' ', 21 - characterData.armor.ToString().Length) + "|");
+            toDisplay.Add("+" + lenght + "+");
+
+            for (int i = 0; i < toDisplay.Count; i++)
+            {
+                manager.DisplayOnScreen(isPlayer ? 0 : Console.WindowWidth - toDisplay[0].Length, 10 + i, toDisplay[i], false);
+            }
         }
         //Fct qui demande au joueur son action et la return en int
-        static int DisplayTurnChoice(charactersActionValue Value)
+        static void DisplayTurnChoice(ref int turnIndex)
         {
-            int playerRead = 0;
-            bool playerReturn = false;
-            bool passe = false;
-            while (!playerReturn || !passe)
-            {
-                Console.WriteLine("Actions possibles :");
-                Console.WriteLine("1 - Attaquer");
-                Console.WriteLine("2 - Défendre");
-                Console.WriteLine("3 - Action spéciale");
-                Console.WriteLine("Choix :");
-                passe = int.TryParse(Console.ReadLine(), out playerRead);
-                if (playerRead > 0 && playerRead <= 3)
-                {
-                    if (playerRead == 3 && Value.CheckCD(1) > 0 && Value.CheckCD(2) > 0 && Value.CheckCD(3) > 0)
-                    {
-                        playerReturn = false;
-                    }
-                    else
-                    {
-                        playerReturn = true;
-                    }
-
-                }
-            }
-            return playerRead;
+            List<string> menuName = new List<string> { "ATTAQUER", "DEFENDRE", "ACTION SPECIALE" };
+            Menu turnMenu = new Menu("", menuName, manager, true);
+            turnMenu.Run(Console.WindowWidth / 2, 11, ref turnIndex);
         }
-        //Fct qui affiche le resultat des actions choisit
-        static string DisplayRePlay()
+        static void DisplayChoixSpe(ref int speIndex, List<string> _spellsList)
         {
-            string cont = "";
-            Console.WriteLine($"Vous voulez rejoué ?");
-            Console.Write("Continuez (o/n) : ");
-            cont = Console.ReadLine();
-
-            while (cont != "o" && cont != "n")
+            List<string> menuName = _spellsList;
+            menuName.Add("RETOUR");
+            Menu turnMenu = new Menu("", menuName, manager, true);
+            turnMenu.Run(Console.WindowWidth / 2, 11, ref speIndex);
+        }
+        static void DisplayResultAction(string name, bool isPlayer,int action, string actionSpe = "")
+        {
+            string toDisplay = "[" + name + "] ";
+            switch (action)
             {
-                Console.WriteLine("EntrÃ© impossible");
-                Console.Write("Continuez (o/n) : ");
-                cont = Console.ReadLine();
-                if (cont == "o" || cont == "n")
-                {
+                case 0:
+                    toDisplay += "Choisit d'attaquer l'adversaire";
                     break;
-                }
+                case 1:
+                    toDisplay += "Choisit de se defendre";
+                    break;
+                case 2:
+                    toDisplay += "Choisit d'effectuer l'action spéciale : " + actionSpe;
+                    break;
+                case 3:
+                    toDisplay += "Est incapable d'agir";
+                    break;
+                default:
+                    break;
             }
-            if (cont == "n")
-            {
-                Console.WriteLine();
-                return cont;
-            }
-            return cont;
+                manager.DisplayOnScreen(Console.WindowWidth/2, 30 + (!isPlayer?1:0), toDisplay, true);
         }
-
-        static string DisplayChoixSpe(charactersActionValue Value, charactersActionValue Ennemi)
+        static bool CheckEnd(charactersActionValue player,charactersActionValue ordi)
         {
-            string act = "";
-            int playerRead = 0;
-            bool playerReturn = false;
-            while (!playerReturn || Value.CheckCD(playerRead) > 0)
-            {
-                Console.WriteLine("Choix Attaque Spécial :");
-                if (Value.silvered == true)
-                {
-                    Console.WriteLine($"1 - {Spells[Value.GetClass()][4]} (CD : {Value.CheckCD(1)})");
-                    Console.WriteLine($"2 - {Spells[Value.GetClass()][5]} (CD : {Value.CheckCD(2)})");
-                    Console.WriteLine($"3 - {Spells[Value.GetClass()][6]} (CD : {Value.CheckCD(3)})");
-
-                }
-                else
-                {
-                    Console.WriteLine($"1 - {Spells[Value.GetClass()][0]} (CD : {Value.CheckCD(1)})");
-                    if (Value.ceFameuxBill == true)
-                    {
-                        Console.WriteLine($"2 - {Spells[Value.GetClass()][4]} (CD : {Value.CheckCD(2)})");
-                        Console.WriteLine($"3 - {Spells[Value.GetClass()][5]} (CD : {Value.CheckCD(3)})");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"2 - {Spells[Value.GetClass()][1]} (CD : {Value.CheckCD(2)})");
-                        Console.WriteLine($"3 - {Spells[Value.GetClass()][2]} (CD : {Value.CheckCD(3)})");
-                    }
-                }
-                Console.WriteLine("Choix :");
-                playerRead = Int32.Parse(Console.ReadLine());
-                if (playerRead > 0 && playerRead <= 3)
-                {
-                    if (Value.DoSpecial(Ennemi, playerRead, out act) == true)
-                    {
-                        playerReturn = true;
-                        return act;
-                    }
-                }
-            }
-            return act;
+            int playerHp = player.hp, ordiHp = ordi.hp;
+            if (playerHp <= 0 || ordiHp <= 0)
+                return true;
+            else 
+                return false;
         }
+        static void DisplayWinner(charactersActionValue player,charactersActionValue ordi)
+        {
+            int playerHp = player.hp, ordiHp = ordi.hp;
+            string winnerName = "";
+            if (playerHp > 0 && ordiHp <= 0) 
+                winnerName = player.name;
+            if (ordiHp > 0 && playerHp <= 0)
+                winnerName = ordi.name;
+            if (winnerName != "")
+                manager.DisplayOnScreen(Console.WindowWidth / 2, 30, "Le Gagnant est " + winnerName, true);
+            else
+                manager.DisplayOnScreen(Console.WindowWidth / 2, 30, "Egalité", true);
+        }
+        static void WaitingKey()
+        {
+            do
+                manager.DisplayOnScreen(Console.WindowWidth / 2, 40, "Appuyer sur une touche pour continuer",true);
+            while (ReadKey(true) == null) ;
+        }
+        #endregion
     }
 }
