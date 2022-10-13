@@ -915,7 +915,8 @@ namespace JeuDeCombat
             manager.AddDisplay(DisplayIntro);
             manager.Display();
             DisplayGlobaleMenu(ref index);
-            bool end = (index == 0) ? false : true;
+            bool end = (index == 2) ? true : false;
+            int playmode = index;
             while (!end)
             {
 
@@ -924,10 +925,24 @@ namespace JeuDeCombat
                 manager.AddDisplay(DisplayIntro);
                 manager.AddDisplay(delegate { classeData.DisplayClassData(Console.WindowWidth / 4 * 3, 20, Classes(index), SetSpellList(index)); });
                 manager.Display();
-                DisplayClassMenu(ref index, Classe);
+                index = 0;
+                DisplayClassMenu(ref index, Classe, "Joueur 1");
                 List<string> spells = SetSpellList(index);
                 charactersActionValue player = new charactersActionValue(Classes(index), "Joueur");
-                charactersActionValue ordi = new charactersActionValue(Classes(IA(Classe.Count())), "Ordinateur");
+                charactersActionValue ordi = null;
+                if (playmode == 1)
+                {
+                    manager.ClearList();
+                    manager.AddDisplay(DisplayIntro);
+                    manager.AddDisplay(delegate { classeData.DisplayClassData(Console.WindowWidth / 4 * 3, 20, Classes(index), SetSpellList(index)); });
+                    manager.Display();
+                    index = 0;
+                    DisplayClassMenu(ref index, Classe, "Joueur 2");
+                    spells = SetSpellList(index);
+                    ordi = new charactersActionValue(Classes(index), "Ordinateur");
+                }
+                else
+                    ordi = new charactersActionValue(Classes(IA(Classe.Count())), "Ordinateur");
                 //Mise En place des Tours
                 //Mise en place de la boucle de jeu
                 int nRound = 0;
@@ -943,7 +958,7 @@ namespace JeuDeCombat
                     nRound++;
                     bool choosedAction = false;
                     int playerAction = -1, iaAction = -1;
-                    int playerSpeAction = 0,iaSpeAction = 0;
+                    int playerSpeAction = 0, iaSpeAction = 0;
                     //Partie Joueur
                     while (!choosedAction)
                     {
@@ -964,7 +979,7 @@ namespace JeuDeCombat
                             {
                                 playerSpeAction = index;
                                 playerAction = 2;
-                                if(player.CheckCD(playerSpeAction)==0)
+                                if (player.CheckCD(playerSpeAction) == 0)
                                     choosedAction = true;
                             }
                         }
@@ -980,29 +995,71 @@ namespace JeuDeCombat
                         playerAction = 3;
                     }
                     //Partie Ordi
-                    choosedAction = false;
 
-                    if (ordi.IsStunned())
-                        iaAction = 3;
-                    else
+                    if (playmode == 1)
                     {
+                        choosedAction = false;
                         while (!choosedAction)
                         {
-                            iaAction = IA(3);
-                            choosedAction = (iaAction == 2 && ordi.CheckCD(0) > 0 && ordi.CheckCD(1) > 0 && ordi.CheckCD(2) > 0) ? false : true;
-                        }
-                        if(iaAction == 2)
-                        {
-                            do
+                            index = 0;
+                            if (!ordi.IsStunned())
+                                DisplayTurnChoice(ref index);
+
+                            if (index == 2)
                             {
-                                iaSpeAction = IA(3);
-                                //Beep();
+                                index = 0;
+                                spells.Clear();
+                                for (int i = 0; i < Spells[Classe[index + 1]].Count; i++)
+                                {
+                                    spells.Add((Spells[ordi.classe][i + (ordi.silvered ? 3 : 0)]) + " [" + ordi.CheckCD(i) + "]");
+                                }
+                                DisplayChoixSpe(ref index, spells);
+                                if (index != 3)
+                                {
+                                    playerSpeAction = index;
+                                    iaAction = 2;
+                                    if (player.CheckCD(playerSpeAction) == 0)
+                                        choosedAction = true;
+                                }
                             }
-                            while(ordi.CheckCD(iaSpeAction)>0);
+                            else
+                            {
+                                choosedAction = true;
+                                iaAction = index;
+                            }
+
+                        }
+                        if (player.IsStunned())
+                        {
+                            playerAction = 3;
                         }
                     }
-                    Priorite(player, ordi, playerAction, iaAction,playerSpeAction,iaSpeAction);
-                    DisplayResultAction(player.name,true, playerAction, Spells[player.classe][playerSpeAction]);
+                    else
+                    {
+                        choosedAction = false;
+
+                        if (ordi.IsStunned())
+                            iaAction = 3;
+                        else
+                        {
+                            while (!choosedAction)
+                            {
+                                iaAction = IA(3);
+                                choosedAction = (iaAction == 2 && ordi.CheckCD(0) > 0 && ordi.CheckCD(1) > 0 && ordi.CheckCD(2) > 0) ? false : true;
+                            }
+                            if (iaAction == 2)
+                            {
+                                do
+                                {
+                                    iaSpeAction = IA(3);
+                                    //Beep();
+                                }
+                                while (ordi.CheckCD(iaSpeAction) > 0);
+                            }
+                        }
+                    }
+                    Priorite(player, ordi, playerAction, iaAction, playerSpeAction, iaSpeAction);
+                    DisplayResultAction(player.name, true, playerAction, Spells[player.classe][playerSpeAction]);
                     DisplayResultAction(ordi.name, false, iaAction, Spells[ordi.classe][iaSpeAction]);
                     player.newTurn();
                     ordi.newTurn();
