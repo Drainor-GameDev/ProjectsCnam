@@ -996,47 +996,42 @@ namespace JeuDeCombat
                     }
                     else
                     {
-                    while (!choosedAction)
-                    {
-                        index = 0;
-                        manager.ClearList();
-                        manager.AddDisplay(DisplayIntro);
-                        manager.AddDisplay(delegate { DisplayManche(nRound); });
-                        manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
-                        manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
-                        manager.Display();
-                        if (player.IsStunned())
-                        {
-                            index = 3;
-                            DisplayTurnChoice(ref index, player.name);
-
-                        }
-
-                        if (index == 2)
+                        while (!choosedAction)
                         {
                             index = 0;
-                            spells.Clear();
-                            for (int i = 0; i < Spells[Classe[index]].Count; i++)
-                            {
-                                spells.Add((Spells[player.classe][i + (player.silvered ? 3 : 0)]) + " [" + player.CheckCD(i) + "]");
-                            }
-                            manager.AddDisplay(delegate { DisplaySpeData(player, ref index); });
-                            DisplayChoixSpe(ref index, spells, player.name);
-                            if (index != 3)
-                            {
-                                playerSpeAction = index;
-                                playerAction = 2;
-                                if (player.CheckCD(playerSpeAction) == 0)
-                                    choosedAction = true;
-                            }
-                        }
-                        else
-                        {
-                            choosedAction = true;
-                            playerAction = index;
-                        }
+                            manager.ClearList();
+                            manager.AddDisplay(DisplayIntro);
+                            manager.AddDisplay(delegate { DisplayManche(nRound); });
+                            manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
+                            manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
+                            manager.Display();
+                            DisplayTurnChoice(ref index, player.name);
 
-                    }
+                            if (index == 2)
+                            {
+                                index = 0;
+                                spells.Clear();
+                                for (int i = 0; i < Spells[Classe[index]].Count; i++)
+                                {
+                                    spells.Add((Spells[player.classe][i + (player.silvered ? 3 : 0)]) + " [" + player.CheckCD(i) + "]");
+                                }
+                                manager.AddDisplay(delegate { DisplaySpeData(player, ref index); });
+                                DisplayChoixSpe(ref index, spells, player.name);
+                                if (index != 3)
+                                {
+                                    playerSpeAction = index;
+                                    playerAction = 2;
+                                    if (player.CheckCD(playerSpeAction) == 0)
+                                        choosedAction = true;
+                                }
+                            }
+                            else
+                            {
+                                choosedAction = true;
+                                playerAction = index;
+                            }
+
+                        }
                     }
                     if (player.IsStunned())
                     {
@@ -1046,49 +1041,49 @@ namespace JeuDeCombat
                     if (playmode == 1)
                     {
                         choosedAction = false;
-                            if (!ordi.IsStunned())
+                        if (!ordi.IsStunned())
                         {
                             index = 3;
                             manager.Display();
                         }
                         else
                         {
-                        while (!choosedAction)
-                        {
-                            manager.ClearList();
-                            manager.AddDisplay(DisplayIntro);
-                            manager.AddDisplay(delegate { DisplayManche(nRound); });
-                            manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
-                            manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
-                            manager.Display();
-                            index = 0;
-                                DisplayTurnChoice(ref index, ordi.name);
-
-                            if (index == 2)
+                            while (!choosedAction)
                             {
                                 index = 0;
-                                spells.Clear();
-                                for (int i = 0; i < Spells[Classe[index + 1]].Count; i++)
-                                {
-                                    spells.Add((Spells[ordi.classe][i + (ordi.silvered ? 3 : 0)]) + " [" + ordi.CheckCD(i) + "]");
-                                }
-                                manager.AddDisplay(delegate { DisplaySpeData(player, ref index); });
-                                DisplayChoixSpe(ref index, spells, ordi.name);
-                                if (index != 3)
-                                {
-                                    iaSpeAction = index;
-                                    iaAction = 2;
-                                    if (player.CheckCD(playerSpeAction) == 0)
-                                        choosedAction = true;
-                                }
-                            }
-                            else
-                            {
-                                choosedAction = true;
-                                iaAction = index;
-                            }
+                                manager.ClearList();
+                                manager.AddDisplay(DisplayIntro);
+                                manager.AddDisplay(delegate { DisplayManche(nRound); });
+                                manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
+                                manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
+                                manager.Display();
+                                DisplayTurnChoice(ref index, ordi.name);
 
-                        }
+                                if (index == 2)
+                                {
+                                    index = 0;
+                                    spells.Clear();
+                                    for (int i = 0; i < Spells[Classe[index + 1]].Count; i++)
+                                    {
+                                        spells.Add((Spells[ordi.classe][i + (ordi.silvered ? 3 : 0)]) + " [" + ordi.CheckCD(i) + "]");
+                                    }
+                                    manager.AddDisplay(delegate { DisplaySpeData(player, ref index); });
+                                    DisplayChoixSpe(ref index, spells, ordi.name);
+                                    if (index != 3)
+                                    {
+                                        iaSpeAction = index;
+                                        iaAction = 2;
+                                        if (player.CheckCD(playerSpeAction) == 0)
+                                            choosedAction = true;
+                                    }
+                                }
+                                else
+                                {
+                                    choosedAction = true;
+                                    iaAction = index;
+                                }
+
+                            }
                         }
                         if (player.IsStunned())
                         {
