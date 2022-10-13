@@ -1105,6 +1105,12 @@ namespace JeuDeCombat
                             }
                         }
                     }
+                    manager.ClearList();
+                    manager.AddDisplay(DisplayIntro);
+                    manager.AddDisplay(delegate { DisplayManche(nRound); });
+                    manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
+                    manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
+                    manager.Display();
                     Priorite(player, ordi, playerAction, iaAction, playerSpeAction, iaSpeAction);
                     DisplayResultAction(player.name, true, playerAction, Spells[player.classe][playerSpeAction]);
                     DisplayResultAction(ordi.name, false, iaAction, Spells[ordi.classe][iaSpeAction]);
