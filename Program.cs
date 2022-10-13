@@ -1112,8 +1112,8 @@ namespace JeuDeCombat
                     manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
                     manager.Display();
                     Priorite(player, ordi, playerAction, iaAction, playerSpeAction, iaSpeAction);
-                    DisplayResultAction(player.name, true, playerAction, Spells[player.classe][playerSpeAction]);
-                    DisplayResultAction(ordi.name, false, iaAction, Spells[ordi.classe][iaSpeAction]);
+                    DisplayResultAction(player.name, true, playerAction, Spells[player.classe][playerSpeAction + (player.silvered ? 3 : 0)]);
+                    DisplayResultAction(ordi.name, false, iaAction, Spells[ordi.classe][iaSpeAction + (ordi.silvered ? 3 : 0)]);
                     player.newTurn();
                     ordi.newTurn();
                     WaitingKey();
