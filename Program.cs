@@ -340,7 +340,7 @@ namespace JeuDeCombat
                                 }
                                 break;
                         }
-                        if(isPlayer)
+                        if (isPlayer)
                             Program.GameSoundPlayer(@"D:\Ce_vieux_Bill_Sound.mp3");
                         break;
                     case "Silver":
@@ -529,7 +529,7 @@ namespace JeuDeCombat
                                 buffs.Add(bufftemp);
                                 break;
                         }
-                        if(isPlayer)
+                        if (isPlayer)
                             Program.GameSoundPlayer(@"D:\LeeroyJenkinsSound.mp3");
                         break;
                     case "Jamy":
@@ -540,7 +540,7 @@ namespace JeuDeCombat
                                 bufftemp = new Buff(2, this, other);
                                 bufftemp.cooldown[selectedSpecial] = true;
                                 buffs.Add(bufftemp);
-                                if(isPlayer)
+                                if (isPlayer)
                                     Program.GameSoundPlayer(@"D:\EnormeSound.mp3");
                                 break;
                             case 1:
@@ -726,6 +726,7 @@ namespace JeuDeCombat
                 _index %= options.Count;
             }
             while (keyPressed != ConsoleKey.Enter && keyPressed != ConsoleKey.Spacebar);
+            Program.GameSoundPlayer(@"D:\SelectedButton.mp3");
             //Selection Bouton
         }
     }
@@ -840,6 +841,21 @@ namespace JeuDeCombat
             {"Leeroy Jenkins", new List<string>{ "LEEROY JENKINS!!!", "LEEROY JENKINS!!!!!!", "LEEROY JENKINS!!!!!!!!" } },
             {"Jamy", new List<string>{ "ÉNORME !!!", "Chauffe Marcel !!!", "DIT MOI JAMY!!!" } }
         };
+        static public Dictionary<string, List<string>> spellEffect = new Dictionary<string, List<string>>
+        {
+            { "Bestraf", new List<string>{"Renvoie les dégâts au prochain tour. (CD : 4)","Augmente son attaque pendant 1 tour. (CD : 7)","Inflige une attaque qui passe la défense. (CD : 3)"} },
+            {"Kolyma", new List<string>{"Soigne le joueur. (CD : 5)","Baisse l'attaque de l'adversaire pendant le prochain tour. (CD : 12)","Inflige des dégâts continus pendant 2 tours. (CD : 6)"}},
+            {"Zelote", new List<string>{"Sacrifie de la vie pour faire une attaque plus puissante. (CD : 12)","Bloque la prochaine attaque. (CD : 2)","Baisse la défense de l'adversaire pour 2 tours. (CD : 3)"}},
+            {"Xyns", new List<string>{"Inflige le double des dégâts pendant 2 tours. (CD : 7)","Bloque grandement les dégâts reçus sur 3 attaques. (CD : 9)","Empêche l’adversaire d'attaquer au prochain tour. (CD : 15)"}},
+            {"Daicy", new List<string>{"Devient insensible à tout dégât. (CD : 10)","Empêche l’adversaire d'attaquer et inflige des dégâts continus pendant 3 tours. (CD : 13)","Inflige des dégâts importants. (CD : 9)"}},
+            {"Bill", new List<string>{"S'équipe de sa lunette pour changer ses capacités. (CD : 0)","Endort l'ennemie pendant 2 tours. (CD : 10)","Augmente sa défense de beaucoup et un peu son attaque pendant 2 tours. (CD : 14)","Enlève sa lunette pour changer ses capacités. (CD : 0)","Augmente son attaque pour 2 tours et fait une attaque qui passe la défense. (CD : 12)","Inflige des dégâts et récupère les dégâts en PV. (CD : 10)"}},
+            {"Silver", new List<string>{"Inflige de gros dégâts à l'ennemi. (CD : 3)","Se rend insensible à la prochaine attaque et augmente sa défense pendant 3 tours. (CD : 10)","Change ses capacités et lui rend de la vie, augmente sa défense et son attaque. (CD : 20)","Brise la défense pour 2 tours et inflige des dégâts. (CD : 10)","Bloque l'adversaire et inflige des dégâts continus pour 3 tours. (CD : 20)","Inflige de gros dégâts et esquive la prochaine attaque. (CD : 12)"}},
+            {"Eilli", new List<string>{"Convertit les dégâts en heal. (CD : 14)","Crée un bouclier pendant 3 tours. (CD : 12)","Bloque l'adversaire pendant 2 tours et inflige des dégâts (CD : 15)"}},
+            {"Beltrame", new List<string>{"Augmente sa défense pendant 2 tours. (CD : 7)","Bloque l'adversaire pendant 1 tour et augmente l’attaque. (CD : 14)","Paralyse et inflige des dégâts continus pendant 2 tours. (CD : 16)"}},
+            {"Akuri", new List<string>{"Se soigne de sa valeur de défense. (CD : 7)","Infligeant des dégâts qui passe la défense. (CD : 2)","Augmente la défense pendant 3 tours et protège de la prochaine attaque. (CD : 6)"}},
+            {"Leeroy Jenkins", new List<string>{"Inflige le triple de ses dégâts. (CD : 7)","Terrorise l’ennemie pendant 5 tours. (CD : 30)","Met sa défense à 0 et perd 40 PV et triple son attaque. (CD : 0)"}},
+            {"Jamii", new List<string>{"Met à 1 PV. (CD : 14)","Renvoie les dégâts de la prochaine attaque et fait 200 dégâts. (CD : 13)","Réduit la défense adverse et convertit les dégâts en soin. (CD : 6)"}}
+        };
         static void Main()
         {
             GameSoundPlayer(@"D:\Darude.mp3");
@@ -858,26 +874,22 @@ namespace JeuDeCombat
                    while (true)
                    {
                        nombreTour++;
-
                        if (nombreTour == 100)
                        {
                            AI1Character.Kill();
                            AI2Character.Kill();
                        }
-
                        if (AI1Character.GetHp() <= 0 && AI2Character.GetHp() <= 0)
                        {
                            Console.WriteLine("Les Nullos on tout les deux Perdu");
                            break;
                        }
-
                        else if (AI1Character.GetHp() <= 0)
                        {
                            Console.WriteLine("Perdu, meilleurs Chance une prochaine fois");
                            victoryCount1++;
                            break;
                        }
-
                        else if (AI2Character.GetHp() <= 0)
                        {
                            Console.WriteLine("GG, Tu as gagnÃ©");
@@ -926,12 +938,10 @@ namespace JeuDeCombat
             //je vais faire des tour , voila
             #region Affichage
             //Menu de base
-
             manager.AddDisplay(DisplayIntro);
             manager.Display();
             DisplayGlobaleMenu(ref index);
-            bool end = (index == 2) ? true : false;
-            int playmode = index;
+            bool end = (index == 0) ? false : true;
             while (!end)
             {
 
@@ -940,34 +950,13 @@ namespace JeuDeCombat
                 manager.AddDisplay(DisplayIntro);
                 manager.AddDisplay(delegate { classeData.DisplayClassData(Console.WindowWidth / 4 * 3, 20, Classes(index), SetSpellList(index)); });
                 manager.Display();
-                index = 0;
-                DisplayClassMenu(ref index, Classe, "Joueur 1");
+                DisplayClassMenu(ref index, Classe);
                 List<string> spells = SetSpellList(index);
-                charactersActionValue player = new charactersActionValue(Classes(index), "Joueur 1");
-                player.isPlayer = true;
-                charactersActionValue ordi = null;
-                if (playmode == 1)
-                {
-                    manager.ClearList();
-                    manager.AddDisplay(DisplayIntro);
-                    manager.AddDisplay(delegate { classeData.DisplayClassData(Console.WindowWidth / 4 * 3, 20, Classes(index), SetSpellList(index)); });
-                    manager.Display();
-                    index = 0;
-                    DisplayClassMenu(ref index, Classe, "Joueur 2");
-                    spells = SetSpellList(index);
-                    ordi = new charactersActionValue(Classes(index), "Joueur 2");
-                }
-                else
-                    ordi = new charactersActionValue(Classes(IA(Classe.Count())), "Ordinateur");
+                charactersActionValue player = new charactersActionValue(Classes(index), "Joueur");
+                charactersActionValue ordi = new charactersActionValue(Classes(IA(Classe.Count())), "Ordinateur");
                 //Mise En place des Tours
                 //Mise en place de la boucle de jeu
                 int nRound = 0;
-                manager.ClearList();
-                manager.AddDisplay(DisplayIntro);
-                manager.AddDisplay(delegate { DisplayManche(nRound); });
-                manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
-                manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
-                manager.Display();
                 //Boucle Princiaple
                 while (!CheckEnd(player, ordi))
                 {
@@ -975,65 +964,42 @@ namespace JeuDeCombat
                     bool choosedAction = false;
                     int playerAction = -1, iaAction = -1;
                     int playerSpeAction = 0, iaSpeAction = 0;
+
+
+
                     //Partie Joueur
-                    while (!choosedAction)
-                    {
-                        index = 0;
-                        if (!player.IsStunned())
-                            DisplayTurnChoice(ref index, player.name);
-
-                        if (index == 2)
-                        {
-                            index = 0;
-                            spells.Clear();
-                            for (int i = 0; i < Spells[Classe[index + 1]].Count; i++)
-                            {
-                                spells.Add((Spells[player.classe][i + (player.silvered ? 3 : 0)]) + " [" + player.CheckCD(i) + "]");
-                            }
-                            DisplayChoixSpe(ref index, spells, player.name);
-                            if (index != 3)
-                            {
-                                playerSpeAction = index;
-                                playerAction = 2;
-                                if (player.CheckCD(playerSpeAction) == 0)
-                                    choosedAction = true;
-                            }
-                        }
-                        else
-                        {
-                            choosedAction = true;
-                            playerAction = index;
-                        }
-
-                    }
                     if (player.IsStunned())
                     {
                         playerAction = 3;
                     }
-                    //Partie Ordi
-
-                    if (playmode == 1)
+                    else
                     {
-                        choosedAction = false;
+
                         while (!choosedAction)
                         {
                             index = 0;
-                            if (!ordi.IsStunned())
-                                DisplayTurnChoice(ref index, ordi.name);
+                            manager.ClearList();
+                            manager.AddDisplay(DisplayIntro);
+                            manager.AddDisplay(delegate { DisplayManche(nRound); });
+                            manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
+                            manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
+                            manager.Display();
+                            DisplayTurnChoice(ref index);
 
                             if (index == 2)
                             {
                                 index = 0;
                                 spells.Clear();
-                                for (int i = 0; i < Spells[Classe[index + 1]].Count; i++)
+                                for (int i = 0; i < Spells[Classe[index]].Count; i++)
                                 {
-                                    spells.Add((Spells[ordi.classe][i + (ordi.silvered ? 3 : 0)]) + " [" + ordi.CheckCD(i) + "]");
+                                    spells.Add((Spells[player.classe][i + (player.silvered ? 3 : 0)]) + " [" + player.CheckCD(i) + "]");
                                 }
-                                DisplayChoixSpe(ref index, spells, ordi.name);
+                                manager.AddDisplay(delegate { DisplaySpeData(player, ref index); });
+                                DisplayChoixSpe(ref index, spells);
                                 if (index != 3)
                                 {
                                     playerSpeAction = index;
-                                    iaAction = 2;
+                                    playerAction = 2;
                                     if (player.CheckCD(playerSpeAction) == 0)
                                         choosedAction = true;
                                 }
@@ -1041,42 +1007,36 @@ namespace JeuDeCombat
                             else
                             {
                                 choosedAction = true;
-                                iaAction = index;
+                                playerAction = index;
                             }
 
-                        }
-                        if (player.IsStunned())
-                        {
-                            playerAction = 3;
                         }
                     }
+                    //Partie Ordi
+                    choosedAction = false;
+
+                    if (ordi.IsStunned())
+                        iaAction = 3;
                     else
                     {
-                        choosedAction = false;
-
-                        if (ordi.IsStunned())
-                            iaAction = 3;
-                        else
+                        while (!choosedAction)
                         {
-                            while (!choosedAction)
+                            iaAction = IA(3);
+                            choosedAction = (iaAction == 2 && ordi.CheckCD(0) > 0 && ordi.CheckCD(1) > 0 && ordi.CheckCD(2) > 0) ? false : true;
+                        }
+                        if (iaAction == 2)
+                        {
+                            do
                             {
-                                iaAction = IA(3);
-                                choosedAction = (iaAction == 2 && ordi.CheckCD(0) > 0 && ordi.CheckCD(1) > 0 && ordi.CheckCD(2) > 0) ? false : true;
+                                iaSpeAction = IA(3);
+                                //Beep();
                             }
-                            if (iaAction == 2)
-                            {
-                                do
-                                {
-                                    iaSpeAction = IA(3);
-                                    //Beep();
-                                }
-                                while (ordi.CheckCD(iaSpeAction) > 0);
-                            }
+                            while (ordi.CheckCD(iaSpeAction) > 0);
                         }
                     }
                     Priorite(player, ordi, playerAction, iaAction, playerSpeAction, iaSpeAction);
-                    DisplayResultAction(player.name, true, playerAction, Spells[player.classe][playerSpeAction]);
-                    DisplayResultAction(ordi.name, false, iaAction, Spells[ordi.classe][iaSpeAction]);
+                    DisplayResultAction(player.name, true, playerAction, Spells[player.classe][playerSpeAction + (player.silvered ? 3 : 0)]);
+                    DisplayResultAction(ordi.name, false, iaAction, Spells[ordi.classe][iaSpeAction + (ordi.silvered ? 3 : 0)]);
                     player.newTurn();
                     ordi.newTurn();
                     WaitingKey();
@@ -1091,6 +1051,7 @@ namespace JeuDeCombat
                 DisplayReplayMenu(ref index);
                 end = index == 0 ? false : true;
             }
+
             //Fin Boucle de Jeu
             #endregion
         }
@@ -1246,23 +1207,20 @@ namespace JeuDeCombat
 
         static void DisplayGlobaleMenu(ref int menuIndex)
         {
-            List<string> menuName = new List<string> { "JOUER CONTRE L'IA", "JOUER JOUEUR VS JOUEUR", "QUITTER" };
-            Menu mainMenu = new Menu("Bienvenue dans l'arène", menuName, manager, false);
+            List<string> menuName = new List<string> { "JOUER", "QUITTER" };
+            Menu mainMenu = new Menu("Bienvenue dans l'arène", menuName, manager, true);
             mainMenu.Run(Console.WindowWidth / 3, 20, ref menuIndex);
-            GameSoundPlayer(@"D:\SelectedButton.mp3");
         }
-        static void DisplayClassMenu(ref int classIndex, List<string> option, string playerName = "")
+        static void DisplayClassMenu(ref int classIndex, List<string> option)
         {
-            Menu mainMenu = new Menu("Choisissez votre classe " + playerName, option, manager, false);
+            Menu mainMenu = new Menu("Choisissez votre classe", option, manager, true);
             mainMenu.Run(Console.WindowWidth / 3, 20, ref classIndex);
-            GameSoundPlayer(@"D:\SelectedButton.mp3");
         }
         static void DisplayReplayMenu(ref int replayIndex)
         {
             List<string> menuName = new List<string> { "REJOUER", "QUITTER" };
             Menu mainMenu = new Menu("Voulez-vous rejouer", menuName, manager, true);
             mainMenu.Run(Console.WindowWidth / 2, Console.WindowHeight / 2, ref replayIndex);
-            GameSoundPlayer(@"D:\SelectedButton.mp3");
         }
         //Fct qui affiche la manche avec son chiffre
         static void DisplayManche(int index)
@@ -1297,20 +1255,23 @@ namespace JeuDeCombat
             }
         }
         //Fct qui demande au joueur son action et la return en int
-        static void DisplayTurnChoice(ref int turnIndex, string name)
+        static void DisplayTurnChoice(ref int turnIndex)
         {
             List<string> menuName = new List<string> { "ATTAQUER", "DEFENDRE", "ACTION SPECIALE" };
-            Menu turnMenu = new Menu(name + " que veut tu faire", menuName, manager, true);
-            turnMenu.Run(Console.WindowWidth / 2, 11, ref turnIndex);
-            GameSoundPlayer(@"D:\SelectedButton.mp3");
+            Menu turnMenu = new Menu("", menuName, manager, true);
+            turnMenu.Run(Console.WindowWidth / 2, 12, ref turnIndex);
         }
-        static void DisplayChoixSpe(ref int speIndex, List<string> _spellsList, string name)
+        static void DisplayChoixSpe(ref int speIndex, List<string> _spellsList)
         {
             List<string> menuName = _spellsList;
             menuName.Add("RETOUR");
-            Menu turnMenu = new Menu(name + " que veut tu faire", menuName, manager, true);
-            turnMenu.Run(Console.WindowWidth / 2, 11, ref speIndex);
-            GameSoundPlayer(@"D:\SelectedButton.mp3");
+            Menu turnMenu = new Menu("", menuName, manager, true);
+            turnMenu.Run(Console.WindowWidth / 2, 12, ref speIndex);
+        }
+        static void DisplaySpeData(charactersActionValue player, ref int index)
+        {
+            if (index < 3)
+                manager.DisplayOnScreen(Console.WindowWidth / 2, 17, spellEffect[player.classe][index], true);
         }
         static void DisplayResultAction(string name, bool isPlayer, int action, string actionSpe = "")
         {
