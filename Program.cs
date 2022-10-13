@@ -854,7 +854,7 @@ namespace JeuDeCombat
             {"Beltrame", new List<string>{"Augmente sa défense pendant 2 tours. (CD : 7)","Bloque l'adversaire pendant 1 tour et augmente l’attaque. (CD : 14)","Paralyse et inflige des dégâts continus pendant 2 tours. (CD : 16)"}},
             {"Akuri", new List<string>{"Se soigne de sa valeur de défense. (CD : 7)","Infligeant des dégâts qui passe la défense. (CD : 2)","Augmente la défense pendant 3 tours et protège de la prochaine attaque. (CD : 6)"}},
             {"Leeroy Jenkins", new List<string>{"Inflige le triple de ses dégâts. (CD : 7)","Terrorise l’ennemie pendant 5 tours. (CD : 30)","Met sa défense à 0 et perd 40 PV et triple son attaque. (CD : 0)"}},
-            {"Jamii", new List<string>{"Met à 1 PV. (CD : 14)","Renvoie les dégâts de la prochaine attaque et fait 200 dégâts. (CD : 13)","Réduit la défense adverse et convertit les dégâts en soin. (CD : 6)"}}
+            {"Jamy", new List<string>{"Met à 1 PV. (CD : 14)","Renvoie les dégâts de la prochaine attaque et fait 200 dégâts. (CD : 13)","Réduit la défense adverse et convertit les dégâts en soin. (CD : 6)"}}
         };
         static void Main()
         {
