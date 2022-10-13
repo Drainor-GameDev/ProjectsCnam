@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using System.Threading;
 using static System.Console;
+using System.Runtime.InteropServices;
 
 namespace JeuDeCombat
 {
@@ -843,19 +844,25 @@ namespace JeuDeCombat
         };
         static public Dictionary<string, List<string>> spellEffect = new Dictionary<string, List<string>>
         {
-            { "Bestraf", new List<string>{"Renvoie les dégâts au prochain tour. (CD : 4)","Augmente son attaque pendant 1 tour. (CD : 7)","Inflige une attaque qui passe la défense. (CD : 3)"} },
-            {"Kolyma", new List<string>{"Soigne le joueur. (CD : 5)","Baisse l'attaque de l'adversaire pendant le prochain tour. (CD : 12)","Inflige des dégâts continus pendant 2 tours. (CD : 6)"}},
-            {"Zelote", new List<string>{"Sacrifie de la vie pour faire une attaque plus puissante. (CD : 12)","Bloque la prochaine attaque. (CD : 2)","Baisse la défense de l'adversaire pour 2 tours. (CD : 3)"}},
-            {"Xyns", new List<string>{"Inflige le double des dégâts pendant 2 tours. (CD : 7)","Bloque grandement les dégâts reçus sur 3 attaques. (CD : 9)","Empêche l’adversaire d'attaquer au prochain tour. (CD : 15)"}},
-            {"Daicy", new List<string>{"Devient insensible à tout dégât. (CD : 10)","Empêche l’adversaire d'attaquer et inflige des dégâts continus pendant 3 tours. (CD : 13)","Inflige des dégâts importants. (CD : 9)"}},
-            {"Bill", new List<string>{"S'équipe de sa lunette pour changer ses capacités. (CD : 0)","Endort l'ennemie pendant 2 tours. (CD : 10)","Augmente sa défense de beaucoup et un peu son attaque pendant 2 tours. (CD : 14)","Enlève sa lunette pour changer ses capacités. (CD : 0)","Augmente son attaque pour 2 tours et fait une attaque qui passe la défense. (CD : 12)","Inflige des dégâts et récupère les dégâts en PV. (CD : 10)"}},
-            {"Silver", new List<string>{"Inflige de gros dégâts à l'ennemi. (CD : 3)","Se rend insensible à la prochaine attaque et augmente sa défense pendant 3 tours. (CD : 10)","Change ses capacités et lui rend de la vie, augmente sa défense et son attaque. (CD : 20)","Brise la défense pour 2 tours et inflige des dégâts. (CD : 10)","Bloque l'adversaire et inflige des dégâts continus pour 3 tours. (CD : 20)","Inflige de gros dégâts et esquive la prochaine attaque. (CD : 12)"}},
-            {"Eilli", new List<string>{"Convertit les dégâts en heal. (CD : 14)","Crée un bouclier pendant 3 tours. (CD : 12)","Bloque l'adversaire pendant 2 tours et inflige des dégâts (CD : 15)"}},
-            {"Beltrame", new List<string>{"Augmente sa défense pendant 2 tours. (CD : 7)","Bloque l'adversaire pendant 1 tour et augmente l’attaque. (CD : 14)","Paralyse et inflige des dégâts continus pendant 2 tours. (CD : 16)"}},
-            {"Akuri", new List<string>{"Se soigne de sa valeur de défense. (CD : 7)","Infligeant des dégâts qui passe la défense. (CD : 2)","Augmente la défense pendant 3 tours et protège de la prochaine attaque. (CD : 6)"}},
-            {"Leeroy Jenkins", new List<string>{"Inflige le triple de ses dégâts. (CD : 7)","Terrorise l’ennemie pendant 5 tours. (CD : 30)","Met sa défense à 0 et perd 40 PV et triple son attaque. (CD : 0)"}},
-            {"Jamy", new List<string>{"Met à 1 PV. (CD : 14)","Renvoie les dégâts de la prochaine attaque et fait 200 dégâts. (CD : 13)","Réduit la défense adverse et convertit les dégâts en soin. (CD : 6)"}}
+            { "Bestraf", new List<string>{"Renvoie les dégâts au prochain tour. (CD : 7)","Augmente son attaque pendant 1 tour. (CD : 11)","Inflige une attaque qui passe la défense. (CD : 5)"} },
+            {"Kolyma", new List<string>{"Soigne le joueur. (CD : 13)","Baisse l'attaque de l'adversaire pendant le prochain tour. (CD : 11)","Inflige des dégâts continus pendant 2 tours. (CD : 5)"}},
+            {"Zelote", new List<string>{"Sacrifie de la vie pour faire une attaque plus puissante. (CD : 11)","Bloque la prochaine attaque. (CD : 6)","Baisse la défense de l'adversaire pour 2 tours. (CD : 9)"}},
+            {"Xyns", new List<string>{"Inflige le double des dégâts pendant 2 tours. (CD : 6)","Bloque grandement les dégâts reçus sur 3 attaques. (CD : 8)","Empêche l’adversaire d'attaquer au prochain tour. (CD : 14)"}},
+            {"Daicy", new List<string>{"Devient insensible à tout dégât. (CD : 9)","Empêche l’adversaire d'attaquer et inflige des dégâts continus pendant 3 tours. (CD : 12)","Inflige des dégâts importants. (CD : 8)"}},
+            {"Bill", new List<string>{"S'équipe de sa lunette pour changer ses capacités. (CD : 0)","Endort l'ennemie pendant 2 tours. (CD : 9)","Augmente sa défense de beaucoup et un peu son attaque pendant 2 tours. (CD : 13)","Enlève sa lunette pour changer ses capacités. (CD : 0)","Augmente son attaque pour 2 tours et fait une attaque qui passe la défense. (CD : 11)","Inflige des dégâts et récupère les dégâts en PV. (CD : 9)"}},
+            {"Silver", new List<string>{"Inflige de gros dégâts à l'ennemi. (CD : 2)","Se rend insensible à la prochaine attaque et augmente sa défense pendant 3 tours. (CD : 9)","Change ses capacités et lui rend de la vie, augmente sa défense et son attaque. (CD : 20)","Brise la défense pour 2 tours et inflige des dégâts. (CD : 10)","Bloque l'adversaire et inflige des dégâts continus pour 3 tours. (CD : 19)","Inflige de gros dégâts et esquive la prochaine attaque. (CD : 11)"}},
+            {"Eilli", new List<string>{"Convertit les dégâts en heal. (CD : 13)","Crée un bouclier pendant 3 tours. (CD : 11)","Bloque l'adversaire pendant 2 tours et inflige des dégâts (CD : 14)"}},
+            {"Beltrame", new List<string>{"Augmente sa défense pendant 2 tours. (CD : 6)","Bloque l'adversaire pendant 1 tour et augmente l’attaque. (CD : 13)","Paralyse et inflige des dégâts continus pendant 2 tours. (CD : 15)"}},
+            {"Akuri", new List<string>{"Se soigne de sa valeur de défense. (CD : 6)","Infligeant des dégâts qui passe la défense. (CD : 1)","Augmente la défense pendant 3 tours et protège de la prochaine attaque. (CD : 5)"}},
+            {"Leeroy Jenkins", new List<string>{"Inflige le triple de ses dégâts. (CD : 6)","Terrorise l’ennemie pendant 5 tours. (CD : 29)","Met sa défense à 0 et perd 40 PV et triple son attaque. (CD : 0)"}},
+            {"Jamy", new List<string>{"Met à 1 PV. (CD : 13)","Renvoie les dégâts de la prochaine attaque et fait 200 dégâts. (CD : 12)","Réduit la défense adverse et convertit les dégâts en soin. (CD : 5)"}}
         };
+        [DllImport("kernel32.dll", ExactSpelling = true)]
+        private static extern IntPtr GetConsoleWindow();
+        private static IntPtr ThisConsole = GetConsoleWindow();
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+        private const int MAXIMIZE = 3;
         static void Main()
         {
             GameSoundPlayer(@"Darude.mp3");
@@ -984,15 +991,19 @@ namespace JeuDeCombat
                     //Partie Joueur
                     while (!choosedAction)
                     {
+                        index = 0;
                         manager.ClearList();
                         manager.AddDisplay(DisplayIntro);
                         manager.AddDisplay(delegate { DisplayManche(nRound); });
                         manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
                         manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
                         manager.Display();
-                        index = 0;
-                        if (!player.IsStunned())
-                            DisplayTurnChoice(ref index, player.name);
+                        DisplayTurnChoice(ref index, player.name);
+                        if (player.IsStunned())
+                        {
+                            index = 3;
+
+                        }
 
                         if (index == 2)
                         {
@@ -1234,7 +1245,8 @@ namespace JeuDeCombat
         {
             //Console.SetWindowPosition(1,1);
             Console.SetBufferSize(Console.LargestWindowWidth, Console.LargestWindowHeight);
-            Console.SetWindowSize(Console.LargestWindowWidth - 1, Console.LargestWindowHeight - 1);
+            Console.SetWindowSize(Console.LargestWindowWidth, Console.LargestWindowHeight); //Permet l'affichage en plein écran
+            ShowWindow(ThisConsole, MAXIMIZE);
             Console.Title = ("Jeu de Combat AAA");
             //Console.SetCursorPosition(Console.LargestWindowWidth / 2, 0);
             Console.CursorVisible = false;
