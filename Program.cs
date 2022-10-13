@@ -1341,5 +1341,17 @@ namespace JeuDeCombat
             while (ReadKey(true) == null) ;
         }
         #endregion
+        
+        #region Audio
+
+        static void GameSoundPlayer(string play_string)
+        {
+            var reader = new NAudio.Wave.Mp3FileReader(play_string); //On prépare la lecture
+            var waveOut = new NAudio.Wave.WaveOutEvent();
+            waveOut.Init(reader); //On initialise le lecteur
+            waveOut.Play(); //On joue le son
+        }
+
+        #endregion
     }
 }
