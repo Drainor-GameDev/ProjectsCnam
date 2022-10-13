@@ -989,6 +989,13 @@ namespace JeuDeCombat
                     int playerAction = -1, iaAction = -1;
                     int playerSpeAction = 0, iaSpeAction = 0;
                     //Partie Joueur
+                    if (player.IsStunned())
+                    {
+                        index = 3;
+                        manager.Display();
+                    }
+                    else
+                    {
                     while (!choosedAction)
                     {
                         index = 0;
@@ -998,10 +1005,10 @@ namespace JeuDeCombat
                         manager.AddDisplay(delegate { DisplayCharacterData(player, true); });
                         manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
                         manager.Display();
-                        DisplayTurnChoice(ref index, player.name);
                         if (player.IsStunned())
                         {
                             index = 3;
+                            DisplayTurnChoice(ref index, player.name);
 
                         }
 
@@ -1030,6 +1037,7 @@ namespace JeuDeCombat
                         }
 
                     }
+                    }
                     if (player.IsStunned())
                     {
                         playerAction = 3;
@@ -1038,6 +1046,13 @@ namespace JeuDeCombat
                     if (playmode == 1)
                     {
                         choosedAction = false;
+                            if (!ordi.IsStunned())
+                        {
+                            index = 3;
+                            manager.Display();
+                        }
+                        else
+                        {
                         while (!choosedAction)
                         {
                             manager.ClearList();
@@ -1047,7 +1062,6 @@ namespace JeuDeCombat
                             manager.AddDisplay(delegate { DisplayCharacterData(ordi, false); });
                             manager.Display();
                             index = 0;
-                            if (!ordi.IsStunned())
                                 DisplayTurnChoice(ref index, ordi.name);
 
                             if (index == 2)
@@ -1074,6 +1088,7 @@ namespace JeuDeCombat
                                 iaAction = index;
                             }
 
+                        }
                         }
                         if (player.IsStunned())
                         {
