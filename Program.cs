@@ -1177,9 +1177,9 @@ namespace JeuDeCombat
             Menu mainMenu = new Menu("Bienvenue dans l'arène", menuName, manager, false);
             mainMenu.Run(Console.WindowWidth / 3, 20, ref menuIndex);
         }
-        static void DisplayClassMenu(ref int classIndex, List<string> option)
+        static void DisplayClassMenu(ref int classIndex, List<string> option, string playerName = "")
         {
-            Menu mainMenu = new Menu("Choisissez votre classe", option, manager, false);
+            Menu mainMenu = new Menu("Choisissez votre classe " + playerName, option, manager, false);
             mainMenu.Run(Console.WindowWidth / 3, 20, ref classIndex);
         }
         static void DisplayReplayMenu(ref int replayIndex)
